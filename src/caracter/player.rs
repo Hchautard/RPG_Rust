@@ -1,15 +1,23 @@
 pub struct Player {
     pub caracter: Caracter,
+    pub badge: Badge,
+    pub inventory: Vec<String>, // Type Ingredient
     pub level: u32,
     pub reputation: u32,
+    pub specialization: Vec<String>, // Type Specialization
+    pub aptitudes: Vec<String>, // Type Aptitude
 }
 
 impl Player {
-    pub fn new(name: &str, style: &str) -> Self {
+    pub fn new(name: &str, style: &str, badge: Badge, inventory: Vec<String>, specialization: Vec<String>, aptitudes: Vec<String>) -> Self {
         Self {
             caracter: Caracter::new(name, style, 100, 50, 0),
             level: 1,
             reputation: 0,
+            inventory: inventory,
+            badge: badge,
+            specialization: specialization,
+            aptitudes: aptitudes,
         }
     }
 
