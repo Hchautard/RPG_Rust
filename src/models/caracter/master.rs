@@ -1,11 +1,15 @@
+use crate::models::badge::Badge;
+
+use super::pnj::Pnj;
+
 pub struct Master {
     pub pnj: Pnj,
-    pub badge : String, // Badge Type
+    pub badge : Badge,
     pub attacks: Vec<String>,
 }
 
-impl Trader {
-    pub fn new(name: &str, style: &str, hp: i32, pp: i32, job: &str, dialogs: Vec<String>, badge: String, attacks: Vec<String>) -> Self {
+impl Master {
+    pub fn new(name: &str, style: &str, hp: i32, pp: i32, job: &str, dialogs: Vec<String>, badge: Badge, attacks: Vec<String>) -> Self {
         Self {
             pnj: Pnj::new(name, style, hp, pp, job, dialogs),
             badge,

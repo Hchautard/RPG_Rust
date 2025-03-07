@@ -1,0 +1,54 @@
+[
+    {
+      "name": "Shadow",
+      "style": "Mysterious",
+      "hp": 80,
+      "pp": 60,
+      "job": "Night Watcher",
+      "dialogs": [
+        "Darkness hides many secrets.",
+        "Only those who understand the unseen may proceed.",
+        "Answer my riddle, or remain in the shadows forever."
+      ],
+      "enigmas": [
+        "The more you remove from me, the bigger I get. What am I? (Answer: A hole)",
+        "I can fly without wings. I can cry without eyes. Wherever I go, darkness follows me. What am I? (Answer: A cloud)",
+        "I have keys but open no locks. I have a space but no room. You can enter, but you can’t go outside. What am I? (Answer: A keyboard)"
+      ]
+    },
+    {
+      "name": "Brutus",
+      "style": "Brutal",
+      "hp": 150,
+      "pp": 30,
+      "job": "Arena Guardian",
+      "dialogs": [
+        "Weaklings have no place here!",
+        "Prove your wit, or prepare to be crushed!",
+        "Only those who think fast can survive."
+      ],
+      "enigmas": [
+        "I am heavy forward, but backward I’m not. What am I? (Answer: A ton)",
+        "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I? (Answer: A map)",
+        "The person who makes it, sells it. The person who buys it, never uses it. The person who uses it, never knows they are using it. What is it? (Answer: A coffin)"
+      ]
+    },
+    {
+      "name": "Eldrin",
+      "style": "Wise",
+      "hp": 90,
+      "pp": 80,
+      "job": "Ancient Sage",
+      "dialogs": [
+        "Knowledge is the key to all doors.",
+        "Wisdom is earned, not given.",
+        "Solve my riddle, and you shall gain passage."
+      ],
+      "enigmas": [
+        "I have no life, but I can die. What am I? (Answer: A battery)",
+        "What comes once in a minute, twice in a moment, but never in a thousand years? (Answer: The letter 'M')",
+        "I can be cracked, made, told, and played. What am I? (Answer: A joke)"
+      ]
+    }
+  ]
+  

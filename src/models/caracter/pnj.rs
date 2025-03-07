@@ -1,3 +1,5 @@
+use super::caracter::Caracter;
+
 pub struct Pnj {
     pub caracter: Caracter,
     pub job: String,
@@ -9,7 +11,7 @@ impl Pnj {
         Self {
             caracter: Caracter::new(name, style, hp, pp, 0),
             job: job.to_string(),
-            dialogs: dialogs,
+            dialogs,
         }
     }
 
