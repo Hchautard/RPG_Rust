@@ -1,6 +1,7 @@
 
 mod services{
     pub mod json_loader;
+    pub mod displayer;
 }
 mod models{
     pub mod badge;
@@ -20,5 +21,12 @@ mod models{
     }
 }
 
-fn main() {
+use std::io::{self};
+use crate::services::displayer::Displayer;
+
+fn main() -> io::Result<()> {
+    let mut displayer = Displayer::new()?;
+    displayer.show_menu()?;
+    displayer.cleanup()?;
+    Ok(())
 }
