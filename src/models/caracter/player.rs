@@ -1,4 +1,4 @@
-use crate::models::{badge::Badge, ingredient::Ingredient};
+use crate::models::{aptitude::Aptitude, badge::Badge, ingredient::Ingredient};
 
 use super::caracter::Caracter;
 
@@ -8,19 +8,17 @@ pub struct Player {
     pub inventory: Vec<Ingredient>,
     pub level: u32,
     pub reputation: u32,
-    pub specialization: Vec<String>, // Type Specialization
-    pub aptitudes: Vec<String>, // Type Aptitude
+    pub aptitudes: Vec<Aptitude>,
 }
 
 impl Player {
-    pub fn new(name: &str, style: &str, badge: Badge, inventory: Vec<Ingredient>, specialization: Vec<String>, aptitudes: Vec<String>) -> Self {
+    pub fn new(name: &str, style: &str, badge: Badge, inventory: Vec<Ingredient>, aptitudes: Vec<Aptitude>) -> Self {
         Self {
             caracter: Caracter::new(name, style, 100, 50, 0),
             level: 1,
             reputation: 0,
             inventory,
             badge,
-            specialization,
             aptitudes,
         }
     }
