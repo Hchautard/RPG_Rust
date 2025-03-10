@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Super Coder",
+        "features": ["Rust", "Async Programming"]
+    },
+    {
+        "name": "Debugger",
+        "features": ["Troubleshooting", "Logging"]
+    }
+]
