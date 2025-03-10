@@ -3,6 +3,7 @@ mod services{
     pub mod json_loader;
     pub mod displayer;
     mod Json_loader;
+    mod game;
 }
 mod models{
     pub mod badge;

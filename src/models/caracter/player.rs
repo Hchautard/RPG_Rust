@@ -33,5 +33,8 @@ impl Player {
     }
 
     fn level_up(&mut self) {
+        self.level += 1;
+        self.reputation = 0;
+        println!("{} passe au niveau {}!", self.caracter.name, self.level);
     }
 }
