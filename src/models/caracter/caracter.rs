@@ -1,13 +1,12 @@
 use serde_derive::{Deserialize, Serialize};
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Caracter {
     pub name: String,
     pub style: String,
     pub hp: i32,
     pub pp: i32,
-    pub bankroll: i32,
+    pub bankroll: i32,  // Si tu souhaites une propriété commune entre Pnj et Client
 }
 
 impl Caracter {
