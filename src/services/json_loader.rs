@@ -31,7 +31,7 @@ impl JsonLoader {
     pub fn loadJsonArena(){
     }
     pub fn loadJsonBouncers(){
-    } 
+    }
 
     pub fn loadJsonClients(){
 
