@@ -1,7 +1,8 @@
 
 mod services{
     pub mod json_loader;
-    pub mod displayer;
+    pub mod displayer_bevy;
+    // mod Json_loader; // Removed incorrect module declaration
     mod Json_loader;
     pub mod game;
 }
@@ -25,7 +26,7 @@ mod models{
 }
 
 use std::io::{self};
-use crate::services::displayer::Displayer;
+use services::{displayer_bevy, json_loader::JsonLoader};
 use models::{badge::Badge, caracter::player::Player};
 use services::{game::Game, json_loader::{self, JsonLoader}};
 
@@ -41,15 +42,12 @@ fn main() -> io::Result<()> {
         }
     };
 
-    let mut displayer = Displayer::new()?;
-    displayer.show_menu(&aptitudes)?;
-    displayer.cleanup()?;
-
-    
-   let mut game = Game::new(10);
-    game.init();
-
-     Ok(())
+    // let mut displayer = Displayer::new()?;
+    // displayer.show_menu(&aptitudes)?;
+    // displayer.cleanup()?;
+    let mut displayer_bevy = displayer_bevy::DisplayerBevy::new();
+    displayer_bevy.run(&aptitudes);
+    Ok(())
 }
 
 
