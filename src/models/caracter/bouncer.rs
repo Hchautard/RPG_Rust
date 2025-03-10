@@ -1,3 +1,5 @@
+use super::pnj::Pnj;
+
 pub struct Bouncer {
     pub pnj: Pnj,
     pub enigmas : Vec<String>,

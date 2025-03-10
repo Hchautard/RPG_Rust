@@ -1,15 +1,25 @@
+use crate::models::{aptitude::Aptitude, badge::Badge, ingredient::Ingredient};
+
+use super::caracter::Caracter;
+
 pub struct Player {
     pub caracter: Caracter,
+    pub badge: Badge,
+    pub inventory: Vec<Ingredient>,
     pub level: u32,
     pub reputation: u32,
+    pub aptitudes: Vec<Aptitude>,
 }
 
 impl Player {
-    pub fn new(name: &str, style: &str) -> Self {
+    pub fn new(name: &str, style: &str, badge: Badge, inventory: Vec<Ingredient>, aptitudes: Vec<Aptitude>) -> Self {
         Self {
             caracter: Caracter::new(name, style, 100, 50, 0),
             level: 1,
             reputation: 0,
+            inventory,
+            badge,
+            aptitudes,
         }
     }
 
@@ -23,9 +33,5 @@ impl Player {
     }
 
     fn level_up(&mut self) {
-        self.level += 1;
-        self.experience = 0;
-        self.caracter.hp += 10;
-        println!("🎉 {} passe au niveau {} !", self.caracter.name, self.level);
     }
 }
