@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::ecs::prelude::*;
 use std::io;
 use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::models::aptitude::Aptitude;
@@ -30,6 +31,14 @@ enum AppState {
     Aptitudes,
     Game,
 }
+
+const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
+const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
+const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
+const RED: Color = Color::srgb(1.0, 0.0, 0.0);
+const GREEN: Color = Color::srgb(0.0, 1.0, 0.0);
+const BLUE: Color = Color::srgb(0.0, 0.0, 1.0);
+const WHITE: Color = Color::srgb(1.0, 1.0, 1.0);
 
 pub struct DisplayerBevy;
 
@@ -71,13 +80,24 @@ fn setup(mut commands: Commands) {
 
 
 fn button_system(
-    mut interaction_query: Query<(&Interaction, &ButtonAction, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
+    mut interaction_query: Query<(
+        &Interaction, 
+        &ButtonAction, 
+        &mut BackgroundColor,
+        &mut BorderColor,
+    ), (Changed<Interaction>, With<Button>)>,
     mut app_state: ResMut<NextState<AppState>>,
 ) {
-    for (interaction, action, mut background_color) in interaction_query.iter_mut() {
+    for (
+        interaction, 
+        action, 
+        mut background_color, 
+        mut border_color,
+    ) in interaction_query.iter_mut() {
         match *interaction {
             Interaction::Pressed => {
                 *background_color = Color::srgb(0.5, 0.5, 0.8).into();
+                border_color.0 = RED.into();
                 match action {
                     ButtonAction::NewGame | ButtonAction::LoadGame => {
                         app_state.set(AppState::Game);
@@ -93,7 +113,14 @@ fn button_system(
                     }
                 }
             }
-            _ => {}
+            Interaction::Hovered => {
+                *background_color = Color::srgb(0.5, 0.5, 0.8).into();
+                border_color.0 = GREEN.into();
+            }
+            Interaction::None => {
+                *background_color = NORMAL_BUTTON.into();
+                border_color.0 = WHITE.into();
+            }
         }
     }
 }
@@ -135,8 +162,50 @@ fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 
 fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<AptitudeList>) {
-    commands.spawn((Node::default(), AptitudesScreen));
+    commands.spawn((
+        Node {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                display: Display::Flex,
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                flex_direction: FlexDirection::Column,
+                ..Default::default()
+        },
+        BackgroundColor(Color::rgb(0.2, 0.2, 0.2)),
+        AptitudesScreen,
+    ))
+    .with_children(|parent| {
+        // Display aptitude list
+        for aptitude in &aptitude_list.aptitudes {
+            parent.spawn(Text::from(
+                aptitude.name.clone(),
+            ));
+        }
+
+        // Back button
+        parent
+            .spawn((
+                Button,
+                Node {
+                        width: Val::Px(200.0),
+                        height: Val::Px(50.0),
+                        margin: UiRect::all(Val::Px(10.0)),
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        ..Default::default()
+                },
+                ButtonAction::Back,
+                BorderColor(Color::BLACK),
+                BorderRadius::MAX,
+                BackgroundColor(NORMAL_BUTTON),
+            ))
+            .with_child((
+                Text::new("Retour"),
+            ));
+    });
 }
+
 
 fn despawn_screen<T: Component>(mut commands: Commands, query: Query<Entity, With<T>>) {
     for entity in query.iter() {
