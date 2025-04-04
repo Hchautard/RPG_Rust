@@ -4,6 +4,8 @@ mod services{
     pub mod displayer;
     mod Json_loader;
     pub mod game;
+    pub mod displayer_bevy;
+    // mod Json_loader; // Removed incorrect module declaration
 }
 mod models{
     pub mod badge;
@@ -28,6 +30,7 @@ use std::io::{self};
 use crate::services::displayer::Displayer;
 use models::{badge::Badge, caracter::player::Player};
 use services::{game::Game, json_loader::{self, JsonLoader}};
+// use crate::services::displayer::Displayer;
 
 fn main() -> io::Result<()> {
     let file_path = "assets/caracters/aptitudes.json";
@@ -41,15 +44,13 @@ fn main() -> io::Result<()> {
         }
     };
 
-    let mut displayer = Displayer::new()?;
-    displayer.show_menu(&aptitudes)?;
-    displayer.cleanup()?;
-
     
-   let mut game = Game::new(10);
-    game.init();
-
-     Ok(())
+    // let mut displayer = Displayer::new()?;
+    // displayer.show_menu(&aptitudes)?;
+    // displayer.cleanup()?;
+    let mut displayer_bevy = displayer_bevy::DisplayerBevy::new();
+    displayer_bevy.run(&aptitudes);
+    Ok(())
 }
 
 
