@@ -19,6 +19,4 @@ impl Fight {
     pub fn verifyThemeCoherence(&self, combo: &Combo) -> bool {
         return self.theme == combo.theme;
     }
-
-    
 }
