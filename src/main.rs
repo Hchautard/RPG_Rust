@@ -1,6 +1,9 @@
 
 mod services{
     pub mod json_loader;
+    pub mod displayer;
+    mod Json_loader;
+    pub mod game;
     pub mod displayer_bevy;
     // mod Json_loader; // Removed incorrect module declaration
     mod Json_loader;
@@ -42,6 +45,7 @@ fn main() -> io::Result<()> {
         }
     };
 
+    
     // let mut displayer = Displayer::new()?;
     // displayer.show_menu(&aptitudes)?;
     // displayer.cleanup()?;
