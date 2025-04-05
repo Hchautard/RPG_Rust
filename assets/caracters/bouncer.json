@@ -1,0 +1,23 @@
+[
+    {
+      "pnj": {
+        "caracter": {
+          "name": "Ragnar",           
+          "style": "Lobthork",  
+          "hp": 100,                
+          "pp": 50,
+          "bankroll": 0
+
+        },
+        "job": "Doorman",           
+        "dialogs": [
+          "Tu ne peux pas passer!",
+          "Seulement les challengres peuvent passer. Seigneur de zeus !!"
+        ]
+      },
+      "enigmas": [
+        "Qui marche sur quatre pattes le matin, deux pattes le soir.",
+        "Quesqui qui ne marche pas sur quatre pattes."
+      ]
+    }
+  ]

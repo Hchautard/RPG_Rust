@@ -1,0 +1,32 @@
+[
+    {
+      "pnj": {
+        "caracter": {
+          "name": "Son Goku",
+          "style": "Saiyajin",
+          "hp": 150,
+          "pp": 80,
+          "bankroll": 5000
+        },
+        "job": "Champion",
+        "dialogs": [
+          "Tu oses défier un maître ?",
+          "Prépare-toi à goûter la puissance des Saiyajin !"
+        ]
+      },
+      "badge": {
+        "name": "Draco Badge",
+        "features": [
+          "Victoire sur le maître des dragons",
+          "Preuve de puissance ultime"
+        ]
+      },
+      "attacks": [
+        "Dragon Claw",
+        "Hyper Beam",
+        "Roar",
+        "Fly"
+      ]
+    }
+  ]
+  

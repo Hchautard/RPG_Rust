@@ -23,7 +23,7 @@ mod models{
 
 use std::io::{self};
 use crate::services::displayer::Displayer;
-use models::{aptitude::Aptitude, caracter::client::Client};
+use models::{aptitude::Aptitude, caracter::client::Client,arena::Arena,caracter::bouncer::Bouncer, caracter::master::Master,caracter::player::Player, badge::Badge}; 
 use services::json_loader::JsonLoader;
 
 fn main() -> io::Result<()> {
@@ -77,9 +77,109 @@ fn main() -> io::Result<()> {
         println!("----------------------------");
     }
 
+    let file_path = "assets/caracters/arena.json";
 
+    let arenas: Vec<Arena> = match JsonLoader::loadJsonArena(file_path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Error loading clients: {}", e);
+            return Ok(());
+        }
+    };
+
+    println!("Number of arenas: {}", arenas.len());
+
+    for  a in arenas.iter() {
+        println!("Arena Name: {}", a.name);
+        println!("Arena Theme: {}", a.theme);
+        println!("----------------------------");
+    }
+
+    let file_path = "assets/caracters/bouncer.json";
+
+    let bouncers: Vec<Bouncer> = match JsonLoader::loadJsonBouncers(file_path) {
+        Ok(b) => b,
+        Err(e) => {
+            eprintln!("Error loading bouncers: {}", e);
+            return Ok(());
+        }
+    };
+
+    println!("Number of bouncers: {}", bouncers.len());
+
+    for b in bouncers.iter() {
+        let pnj = &b.pnj;
+    
+        println!("Bouncer Name: {}", pnj.caracter.name);
+        println!("Bouncer Style: {}", pnj.caracter.style);
+        println!("Bouncer HP: {}", pnj.caracter.hp);
+        println!("Bouncer PP: {}", pnj.caracter.pp);
+        println!("Bouncer Job: {}", pnj.job);
+    
+        for dialog in &pnj.dialogs {
+            println!("Dialog: {}", dialog);
+        }
+    
+        for enigma in &b.enigmas {
+            println!("Enigma: {}", enigma);
+        }
+    
+        println!("----------------------------");
+    }
+
+    let file_path = "assets/caracters/masters.json";
+
+    let masters: Vec<Master> = match JsonLoader::loadJsonMasters(file_path) {
+        Ok(m) => m,
+        Err(e) => {
+            eprintln!("Error loading masters: {}", e);
+            return Ok(());
+        }
+    };
+
+    println!("Number of masters: {}", masters.len());
+
+    for m in masters.iter() {
+        let pnj = &m.pnj;
+
+        println!("Master Name: {}", pnj.caracter.name);
+        println!("Master Style: {}", pnj.caracter.style);
+        println!("Master HP: {}", pnj.caracter.hp);
+        println!("Master PP: {}", pnj.caracter.pp);
+        println!("Master Job: {}", pnj.job);
+
+        for dialog in &pnj.dialogs {
+            println!("Dialog: {}", dialog);
+        }
+
+        println!("Badge: {}", m.badge.name);
+        for feature in &m.badge.features {
+            println!("Feature: {}", feature);
+        }
+
+        for attack in &m.attacks {
+            println!("Attack: {}", attack);
+        }
+
+        println!("----------------------------");
+    }
+
+    let mut player = Player::new("Ash Ketchum", "Pokémon Trainer", Badge {
+        name: "Pikachu Badge".to_string(),
+        features: vec!["Symbolizes victory over Pikachu".to_string()],
+    }, vec![], vec![]);
+    
+    player.level = 2;
+    
+    match JsonLoader::save_player_to_json("assets/sauvegarde/players.json", &player) {
+        Ok(()) => println!("Player saved successfully!"),
+        Err(e) => eprintln!("Error saving player: {}", e),
+    }
     
     
+    
+
+
     Ok(())
 }
 

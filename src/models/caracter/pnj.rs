@@ -3,7 +3,7 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Pnj {
-    pub caracter: Caracter,  // Hérite en l'incluant
+    pub caracter: Caracter,
     pub job: String,
     pub dialogs: Vec<String>,
 }
@@ -11,7 +11,7 @@ pub struct Pnj {
 impl Pnj {
     pub fn new(name: &str, style: &str, hp: i32, pp: i32, job: &str, dialogs: Vec<String>) -> Self {
         Self {
-            caracter: Caracter::new(name, style, hp, pp, 0),  // Initialisation du bankroll à 0 par défaut
+            caracter: Caracter::new(name, style, hp, pp, 0),
             job: job.to_string(),
             dialogs,
         }

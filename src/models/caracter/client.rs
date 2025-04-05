@@ -3,7 +3,7 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Client {
-    pub pnj: Pnj,  // Hérite de Pnj
+    pub pnj: Pnj,  
     pub tips: i32,
     pub advices: Vec<String>,
 }
@@ -18,6 +18,6 @@ impl Client {
     }
 
     pub fn giveReputation(&self) -> i32 {
-        self.tips * 10  // Exemple simple de méthode qui calcule la réputation
+        self.tips * 10  
     }
 }
