@@ -12,10 +12,11 @@ pub struct Player {
     pub level: u32,
     pub reputation: u32,
     pub aptitudes: Vec<Aptitude>,
+    pub max_hp: i32,
 }
 
 impl Player {
-    pub fn new(name: &str, style: &str, badge: Badge, inventory: Vec<Ingredient>, aptitudes: Vec<Aptitude>) -> Self {
+    pub fn new(name: &str, style: &str, badge: Badge, inventory: Vec<Ingredient>, aptitudes: Vec<Aptitude>, max_hp:i32) -> Self {
         Self {
             caracter: Caracter::new(name, style, 100, 50, 0),
             level: 1,
@@ -23,6 +24,7 @@ impl Player {
             inventory,
             badge,
             aptitudes,
+            max_hp,
         }
     }
 

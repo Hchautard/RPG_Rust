@@ -3,6 +3,7 @@ use std::ptr::null;
 use crate::models::{round::Round, aptitude::Aptitude, arena::Arena, badge::Badge, caracter::{bouncer::Bouncer, client::Client, master::Master, player::{self, Player}, trader::Trader}, ingredient::Ingredient};
 
 use super::Json_loader::JsonLoader;
+use  crate::displayer_bevy;
 
 
 pub struct Game {
@@ -80,7 +81,7 @@ impl Game {
         }
     }
     pub fn init_player(&mut self){
-        self.player= Some(Player::new("player", "style", Badge::new("badge", Vec::new()), Vec::new(), Vec::new()))
+        //self.player= Some(Player::new("player", "style", Badge::new("badge", Vec::new()), Vec::new(), Vec::new()))
     }
 
     pub fn playRound(){
@@ -92,7 +93,9 @@ impl Game {
 
     }
 
-
-
+    pub fn display(&self){    
+        let mut displayer_bevy: displayer_bevy::DisplayerBevy = displayer_bevy::DisplayerBevy::new();
+        displayer_bevy.run(&self.aptitudes);
+    }
 
 }

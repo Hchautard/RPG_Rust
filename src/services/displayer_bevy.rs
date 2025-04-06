@@ -2,7 +2,9 @@ use bevy::prelude::*;
 use bevy::ecs::prelude::*;
 use std::io;
 use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
-use crate::models::aptitude::Aptitude;
+use crate::models::{aptitude::Aptitude, badge::Badge, caracter::{master::Master, player::Player}};
+
+use super::combat_state::{CombatState, Turn};
 
 #[derive(Component)]
 struct MainMenu;
@@ -17,6 +19,7 @@ enum ButtonAction {
     ShowAptitudes,
     Quit,
     Back,
+    StartFight
 }
 
 #[derive(Resource)]
@@ -30,6 +33,7 @@ enum AppState {
     MainMenu,
     Aptitudes,
     Game,
+    Fight
 }
 
 const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
@@ -50,6 +54,9 @@ impl Plugin for DisplayerBevy {
             .add_systems(OnEnter(AppState::MainMenu), setup_main_menu)
             .add_systems(OnExit(AppState::MainMenu), despawn_screen::<MainMenu>)
             .add_systems(OnEnter(AppState::Aptitudes), setup_aptitudes_screen)
+            .add_systems(OnEnter(AppState::Fight), setup_combat_screen)
+            .add_systems(OnExit(AppState::Fight), despawn_screen::<CombatScreen>)
+            .add_systems(Update, combat_system.run_if(in_state(AppState::Fight)))
             .add_systems(OnExit(AppState::Aptitudes), despawn_screen::<AptitudesScreen>);
     }
 }
@@ -69,6 +76,10 @@ impl DisplayerBevy {
 
         Ok(())
     }
+
+    pub fn show_game(&self) {
+
+    }
 }
 
 
@@ -80,6 +91,7 @@ fn setup(mut commands: Commands) {
 
 
 fn button_system(
+    mut commands: Commands,
     mut interaction_query: Query<(
         &Interaction, 
         &ButtonAction, 
@@ -87,6 +99,7 @@ fn button_system(
         &mut BorderColor,
     ), (Changed<Interaction>, With<Button>)>,
     mut app_state: ResMut<NextState<AppState>>,
+    mut combat_state: Option<ResMut<CombatState>>, 
 ) {
     for (
         interaction, 
@@ -99,18 +112,27 @@ fn button_system(
                 *background_color = Color::srgb(0.5, 0.5, 0.8).into();
                 border_color.0 = RED.into();
                 match action {
-                    ButtonAction::NewGame | ButtonAction::LoadGame => {
-                        app_state.set(AppState::Game);
-                    }
+                    ButtonAction::NewGame => {
+                                        let badge = Badge::new("Badge de Débutant", vec!["Tu es prêt à commencer !".to_string()]);
+                                        let master = Master::new("Gin Tonic", "Mixologue",50, 50, 20, "Boss", vec!["Tu ne me battras jamais !".to_string()], badge.clone(), vec!["Coup de Gin".to_string()]);
+                                        let player = Player::new("Héros", "Barman", badge, vec![], vec![], 60);
+                                        start_combat(&mut commands, player, master, &mut app_state);
+                                    }
                     ButtonAction::ShowAptitudes => {
-                        app_state.set(AppState::Aptitudes);
-                    }
+                                        app_state.set(AppState::Aptitudes);
+                                    }
                     ButtonAction::Quit => {
-                        std::process::exit(0);
-                    }
+                                        std::process::exit(0);
+                                    }
                     ButtonAction::Back => {
-                        app_state.set(AppState::MainMenu);
-                    }
+                                        app_state.set(AppState::MainMenu);
+                                    }
+                    ButtonAction::StartFight => {
+                                        if let Some(combat) = combat_state.as_deref_mut() {
+                                            combat.started = true;
+                                        }
+                                    }                               
+                    ButtonAction::LoadGame => todo!(),
                 }
             }
             Interaction::Hovered => {
@@ -124,6 +146,24 @@ fn button_system(
         }
     }
 }
+
+pub fn start_combat(commands: &mut Commands, mut player: Player, mut master: Master, app_state: &mut ResMut<NextState<AppState>>) {
+    player.caracter.hp = player.max_hp;
+    master.pnj.caracter.hp = master.max_hp;
+
+    commands.insert_resource(CombatState {
+        player,
+        master,
+        turn: Turn::Player,
+        finished: false,
+        started: false,
+    });
+
+    app_state.set(AppState::Fight);
+}
+
+
+
 
 fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
@@ -139,7 +179,6 @@ fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     ))
     .with_children(|parent| {
         
-        // Spawn buttons
         for (label, action) in [
             ("Nouvelle Partie", ButtonAction::NewGame),
             ("Charger Partie", ButtonAction::LoadGame),
@@ -176,14 +215,12 @@ fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<AptitudeLis
         AptitudesScreen,
     ))
     .with_children(|parent| {
-        // Display aptitude list
         for aptitude in &aptitude_list.aptitudes {
             parent.spawn(Text::from(
                 aptitude.name.clone(),
             ));
         }
 
-        // Back button
         parent
             .spawn((
                 Button,
@@ -212,3 +249,88 @@ fn despawn_screen<T: Component>(mut commands: Commands, query: Query<Entity, Wit
         commands.entity(entity).despawn_recursive();
     }
 }
+
+
+fn combat_system(
+    mut combat: ResMut<CombatState>,
+    mut next_state: ResMut<NextState<AppState>>,
+) {
+    if !combat.started {
+        return;
+    }
+
+    
+    if combat.finished {
+        return;
+    }
+
+    if combat.player.caracter.hp <= 0 {
+        println!("Le joueur a perdu !");
+        combat.finished = true;
+        //next_state.set(AppState::MainMenu);
+        return;
+    }
+
+    if combat.master.pnj.caracter.hp <= 0 {
+        println!("Le joueur a battu {} et gagne le badge {:?}", combat.master.pnj.caracter.name, combat.master.badge);
+        combat.finished = true;
+        //next_state.set(AppState::MainMenu);
+        return;
+    }
+
+    match combat.turn {
+        Turn::Player => {
+            println!("C'est au joueur de préparer un cocktail !");
+            let damage = 10;
+            combat.master.pnj.caracter.hp -= damage;
+            println!("Le joueur inflige {} de dégâts à {}", damage, combat.master.pnj.caracter.name);
+            combat.turn = Turn::Master;
+        }
+        Turn::Master => {
+            println!("{} prépare un cocktail dévastateur!", combat.master.pnj.caracter.name);
+            let damage = 8; 
+            combat.player.caracter.hp -= damage;
+            println!("{} inflige {} de dégâts au joueur", combat.master.pnj.caracter.name, damage);
+            combat.turn = Turn::Player;
+        }
+    }
+}
+
+#[derive(Component)]
+struct CombatScreen;
+
+fn setup_combat_screen(mut commands: Commands, combat: Res<CombatState>) {
+    commands.spawn((
+        Node {
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
+            ..Default::default()
+        },
+        CombatScreen,
+    ))
+    .with_children(|parent| {
+        parent.spawn(Text::from(format!("Combat contre : {}", combat.master.pnj.caracter.name)));
+        parent.spawn(Text::from(format!("HP Joueur : {}", combat.player.caracter.hp)));
+        parent.spawn(Text::from(format!("HP Boss : {}", combat.master.pnj.caracter.hp)));
+
+        parent.spawn((
+            Button,
+            ButtonAction::Back,
+            BackgroundColor(NORMAL_BUTTON),
+        )).with_children(|b| {
+            b.spawn(Text::from("Fuir"));
+        });
+        parent.spawn((
+            Button,
+            ButtonAction::StartFight,
+            BackgroundColor(NORMAL_BUTTON),
+        )).with_children(|b| {
+            b.spawn(Text::from("Commencer le Combat"));
+        });
+        
+    });
+}
+
