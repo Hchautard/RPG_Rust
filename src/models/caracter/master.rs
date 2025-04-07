@@ -2,6 +2,8 @@ use crate::models::badge::Badge;
 
 use super::pnj::Pnj;
 
+use serde_derive::{Deserialize, Serialize};
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Master {
     pub pnj: Pnj,
     pub badge : Badge,

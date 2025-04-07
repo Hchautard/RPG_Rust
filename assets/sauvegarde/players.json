@@ -1,0 +1,21 @@
+{
+  "2": {
+    "aptitudes": [],
+    "badge": {
+      "features": [
+        "Symbolizes victory over Pikachu"
+      ],
+      "name": "Pikachu Badge"
+    },
+    "caracter": {
+      "bankroll": 0,
+      "hp": 100,
+      "name": "Ash Ketchum",
+      "pp": 50,
+      "style": "Pokémon Trainer"
+    },
+    "inventory": [],
+    "level": 2,
+    "reputation": 0
+  }
+}
