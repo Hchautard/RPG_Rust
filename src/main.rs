@@ -5,6 +5,7 @@ mod services{
     // mod Json_loader; // Removed incorrect module declaration
     mod Json_loader;
     pub mod game;
+    mod ui;
 }
 mod models{
     pub mod badge;
@@ -28,7 +29,7 @@ mod models{
 use std::io::{self};
 use services::{displayer_bevy, json_loader::JsonLoader};
 use models::{badge::Badge, caracter::player::Player};
-use services::{game::Game, json_loader::{self, JsonLoader}};
+// use services::{game::Game, json_loader::{self, JsonLoader}};
 
 fn main() -> io::Result<()> {
     let file_path = "assets/caracters/aptitudes.json";
