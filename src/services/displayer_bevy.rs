@@ -1,44 +1,17 @@
 use bevy::prelude::*;
-use bevy::ecs::prelude::*;
 use std::io;
-use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::models::aptitude::Aptitude;
 
-#[derive(Component)]
-struct MainMenu;
-
-#[derive(Component)]
-struct AptitudesScreen;
-
-#[derive(Component)]
-enum ButtonAction {
-    NewGame,
-    LoadGame,
-    ShowAptitudes,
-    Quit,
-    Back,
-}
-
-#[derive(Resource)]
-pub struct AptitudeList {
-    aptitudes: Vec<Aptitude>,
-}
-
-#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
-enum AppState {
-    #[default]
-    MainMenu,
-    Aptitudes,
-    Game,
-}
-
-const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
-const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
-const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
-const RED: Color = Color::srgb(1.0, 0.0, 0.0);
-const GREEN: Color = Color::srgb(0.0, 1.0, 0.0);
-const BLUE: Color = Color::srgb(0.0, 0.0, 1.0);
-const WHITE: Color = Color::srgb(1.0, 1.0, 1.0);
+// Import des constantes et états
+use crate::services::ui::constants::{
+    AppState, ButtonAction, 
+    NORMAL_BUTTON, BLACK, WHITE, RED, GREEN, BLUE, SELECTED_BUTTON
+};
+// Import des ressources et composants depuis les sous-modules
+use crate::services::ui::aptitudes_screen::{AptitudeList, setup_aptitudes_screen, despawn_aptitudes_screen};
+use crate::services::ui::main_menu::{setup_main_menu, despawn_main_menu};
+use crate::services::ui::game_screen::{setup_game, despawn_game};
+use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};
 
 pub struct DisplayerBevy;
 
@@ -47,10 +20,21 @@ impl Plugin for DisplayerBevy {
         app.init_state::<AppState>()
             .add_systems(Startup, setup)
             .add_systems(Update, button_system)
+
+            // Menu principal
             .add_systems(OnEnter(AppState::MainMenu), setup_main_menu)
-            .add_systems(OnExit(AppState::MainMenu), despawn_screen::<MainMenu>)
+            .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)
+
+            // Écran des aptitudes
             .add_systems(OnEnter(AppState::Aptitudes), setup_aptitudes_screen)
-            .add_systems(OnExit(AppState::Aptitudes), despawn_screen::<AptitudesScreen>);
+            .add_systems(OnExit(AppState::Aptitudes), despawn_aptitudes_screen)
+
+            // Écran de jeu
+            .add_systems(OnEnter(AppState::Game), setup_game)
+            .add_systems(OnExit(AppState::Game), despawn_game)
+            
+            // Ajout du plugin pour les slots de joueur
+            .add_plugins(PlayerSlotScreenPlugin);
     }
 }
 
@@ -60,10 +44,10 @@ impl DisplayerBevy {
     }
 
     pub fn run(&self, aptitudes: &[Aptitude]) -> io::Result<()> {
-
         App::new()
             .add_plugins(DefaultPlugins)
             .insert_resource(AptitudeList { aptitudes: aptitudes.to_vec() })
+            .init_resource::<SelectedPlayerSlot>()
             .add_plugins(DisplayerBevy::new())
             .run();
 
@@ -71,13 +55,9 @@ impl DisplayerBevy {
     }
 }
 
-
-
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2d::default());
 }
-
-
 
 fn button_system(
     mut interaction_query: Query<(
@@ -87,6 +67,7 @@ fn button_system(
         &mut BorderColor,
     ), (Changed<Interaction>, With<Button>)>,
     mut app_state: ResMut<NextState<AppState>>,
+    mut selected_slot: ResMut<SelectedPlayerSlot>,
 ) {
     for (
         interaction, 
@@ -97,10 +78,17 @@ fn button_system(
         match *interaction {
             Interaction::Pressed => {
                 *background_color = Color::srgb(0.5, 0.5, 0.8).into();
-                border_color.0 = RED.into();
+                border_color.0 = RED;
+                
+                // Gestion des actions
                 match action {
-                    ButtonAction::NewGame | ButtonAction::LoadGame => {
-                        app_state.set(AppState::Game);
+                    ButtonAction::NewGame => {
+                        // Aller à l'écran de sélection de slot au lieu d'aller directement au jeu
+                        app_state.set(AppState::PlayerSlot);
+                    }
+                    ButtonAction::LoadGame => {
+                        // Pour le chargement aussi, on passe par la sélection de slot
+                        app_state.set(AppState::PlayerSlot);
                     }
                     ButtonAction::ShowAptitudes => {
                         app_state.set(AppState::Aptitudes);
@@ -111,104 +99,24 @@ fn button_system(
                     ButtonAction::Back => {
                         app_state.set(AppState::MainMenu);
                     }
+                    ButtonAction::SelectSlot(slot_index) => {
+                        selected_slot.slot = Some(*slot_index);
+                    }
+                    ButtonAction::ConfirmSlot => {
+                        if selected_slot.slot.is_some() {
+                            app_state.set(AppState::Game);
+                        }
+                    }
                 }
             }
             Interaction::Hovered => {
                 *background_color = Color::srgb(0.5, 0.5, 0.8).into();
-                border_color.0 = GREEN.into();
+                border_color.0 = GREEN;
             }
             Interaction::None => {
                 *background_color = NORMAL_BUTTON.into();
-                border_color.0 = WHITE.into();
+                border_color.0 = WHITE;
             }
         }
-    }
-}
-
-fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn((
-        Node {
-                height: Val::Percent(100.0),
-                width: Val::Percent(100.0),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                flex_direction: FlexDirection::Column,
-            ..Default::default()
-        },
-        MainMenu,
-    ))
-    .with_children(|parent| {
-        
-        // Spawn buttons
-        for (label, action) in [
-            ("Nouvelle Partie", ButtonAction::NewGame),
-            ("Charger Partie", ButtonAction::LoadGame),
-            ("Voir les Aptitudes", ButtonAction::ShowAptitudes),
-            ("Quitter", ButtonAction::Quit),
-        ] {
-            parent
-                .spawn((
-                    Button {
-                        ..Default::default()
-                    },
-                    action,
-                ))
-                .with_children(|button| {
-                    button.spawn(Text::from(label));
-                }); ;
-        }
-    });
-}
-
-
-fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<AptitudeList>) {
-    commands.spawn((
-        Node {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                display: Display::Flex,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                flex_direction: FlexDirection::Column,
-                ..Default::default()
-        },
-        BackgroundColor(Color::rgb(0.2, 0.2, 0.2)),
-        AptitudesScreen,
-    ))
-    .with_children(|parent| {
-        // Display aptitude list
-        for aptitude in &aptitude_list.aptitudes {
-            parent.spawn(Text::from(
-                aptitude.name.clone(),
-            ));
-        }
-
-        // Back button
-        parent
-            .spawn((
-                Button,
-                Node {
-                        width: Val::Px(200.0),
-                        height: Val::Px(50.0),
-                        margin: UiRect::all(Val::Px(10.0)),
-                        justify_content: JustifyContent::Center,
-                        align_items: AlignItems::Center,
-                        ..Default::default()
-                },
-                ButtonAction::Back,
-                BorderColor(Color::BLACK),
-                BorderRadius::MAX,
-                BackgroundColor(NORMAL_BUTTON),
-            ))
-            .with_child((
-                Text::new("Retour"),
-            ));
-    });
-}
-
-
-fn despawn_screen<T: Component>(mut commands: Commands, query: Query<Entity, With<T>>) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
     }
 }

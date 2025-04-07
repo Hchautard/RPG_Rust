@@ -1,9 +1,12 @@
+use std::string;
+
 use super::pnj::Pnj;
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Bouncer {
     pub pnj: Pnj,
+
     pub enigmas: Vec<String>,
 }
 
@@ -26,6 +29,7 @@ impl Bouncer {
     pub fn give_enigma(&self, index: usize) -> Option<&String> {
         self.enigmas.get(index)
     }
+
 
     pub fn verify_enigma(&self, index: usize, answer: &str) -> bool {
         match self.enigmas.get(index) {

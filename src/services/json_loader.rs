@@ -3,6 +3,7 @@ use std::io::Read;
 use std::io::Write;
 use serde_json;
 
+use serde_json::json;
 use crate::models::aptitude::Aptitude;
 use crate::models::badge::Badge;
 use crate::models::caracter::client::Client;
