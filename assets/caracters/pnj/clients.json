@@ -1,0 +1,26 @@
+[
+    {
+      "pnj": {
+        "caracter": {
+          "name": "Hugo chautard",
+          "style": "Mini-jupe",
+          "hp": 100,
+          "pp": 50,
+          "bankroll": 0
+        },
+        "job": "Alcoolo",
+        "dialogs": [
+          "Hello, my friend.",
+          "Welcome to my bar.",
+          "How can I help you today?"
+        ]
+      },
+      "tips": 3,
+      "advices": [
+        "You have 3 tips left.",
+        "You have 2 advices left.",
+        "You have 1 advice left."
+      ]
+    }
+  ]
+  
