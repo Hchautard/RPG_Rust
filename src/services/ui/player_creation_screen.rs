@@ -6,6 +6,7 @@ use crate::models::caracter::player::Player;
 use crate::models::badge::Badge;
 use crate::models::ingredient::Ingredient;
 use bevy::ecs::system::ParamSet;
+use crate::services::json_loader::JsonLoader;
 
 /// Composant pour marquer les entités de l'écran de création de personnage
 #[derive(Component)]
@@ -429,10 +430,47 @@ pub fn handle_aptitude_selection(
 
 // Système de gestion de la confirmation de création
 pub fn handle_creation_confirmation(
+    interaction_query: Query<(&Interaction, &ButtonAction), (Changed<Interaction>, With<Button>)>,
+    creation_data: Res<PlayerCreationData>,
+    selected_slot: Res<SelectedPlayerSlot>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
-    // Cette fonction serait normalement appelée depuis button_system quand on clique sur le bouton de création
-    // Pour l'exemple, elle est vide car l'action sera gérée par la mise à jour du button_system existant
+
+    JsonLoader::ensure_save_directory();
+
+    for (interaction, action) in interaction_query.iter() {
+        if let Interaction::Pressed = *interaction {
+            if let ButtonAction::CreatePlayer = action {
+                // Vérifier que les informations nécessaires sont renseignées
+                if !creation_data.name.is_empty() && 
+                   creation_data.selected_badge_index.is_some() && !creation_data.selected_aptitudes.is_empty() {
+                    
+                    // Créer le joueur
+                    let player = create_player(&creation_data);
+                    
+                    // Déterminer le chemin du fichier basé sur le slot
+                    let slot_index = selected_slot.slot.unwrap_or(0);
+                    let file_path = format!("save/player_slot_{}.json", slot_index + 1);
+                    
+                    // Sauvegarder le joueur dans un fichier JSON
+                    match JsonLoader::save_player_to_json(&file_path, &player) {
+                        Ok(_) => {
+                            println!("Joueur sauvegardé dans {}", file_path);
+                            // Revenir à l'écran de sélection de slot ou au menu principal
+                            next_state.set(AppState::PlayerSlot);
+                        },
+                        Err(e) => {
+                            println!("Erreur lors de la sauvegarde du joueur: {}", e);
+                            // Vous pourriez vouloir informer l'utilisateur de l'erreur ici
+                        }
+                    }
+                } else {
+                    println!("Veuillez compléter toutes les informations avant de créer le personnage.");
+                    // Vous pourriez vouloir afficher un message à l'utilisateur ici
+                }
+            }
+        }
+    }
 }
 
 // Fonction utilitaire pour créer un nouveau joueur à partir des données de création
