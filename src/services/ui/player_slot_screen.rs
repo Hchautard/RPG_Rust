@@ -1,5 +1,9 @@
 use bevy::prelude::*;
 use crate::services::ui::constants::{AppState, ButtonAction, NORMAL_BUTTON, SELECTED_BUTTON, WHITE, BLACK, BLUE};
+use crate::services::json_loader::JsonLoader;
+use std::fs::File;
+use std::path::Path;
+use serde_json::Value;
 
 /// Composant pour marquer les entités de l'écran de sélection de slot
 #[derive(Component)]
@@ -11,6 +15,20 @@ pub struct SelectedPlayerSlot {
     pub slot: Option<usize>,
 }
 
+/// Structure pour stocker les informations des slots
+#[derive(Resource)]
+pub struct SlotInfo {
+    pub info: Vec<Option<String>>, // None si vide, Some(nom) si occupé
+}
+
+impl Default for SlotInfo {
+    fn default() -> Self {
+        Self {
+            info: vec![None, None, None],
+        }
+    }
+}
+
 /// Plugin pour l'écran de sélection de slot
 pub struct PlayerSlotScreenPlugin;
 
@@ -18,9 +36,14 @@ impl Plugin for PlayerSlotScreenPlugin {
     fn build(&self, app: &mut App) {
         app
             .init_resource::<SelectedPlayerSlot>()
+            .init_resource::<SlotInfo>()
+            .add_systems(Startup, load_player_slots)
+            .add_systems(OnEnter(AppState::PlayerSlot), load_player_slots)
             .add_systems(OnEnter(AppState::PlayerSlot), setup_player_slot_screen)
             .add_systems(OnExit(AppState::PlayerSlot), despawn_player_slot_screen)
-            .add_systems(Update, update_slot_selection);
+            .add_systems(Update, update_slot_selection)
+            .add_systems(OnExit(AppState::PlayerCreation), load_player_slots);
+            
     }
 }
 
@@ -30,8 +53,52 @@ impl Default for SelectedPlayerSlot {
     }
 }
 
+/// Système pour charger les informations des slots
+/// Système pour charger les informations des slots
+pub fn load_player_slots(mut slot_info: ResMut<SlotInfo>) {
+    // S'assurer que le dossier de sauvegarde existe
+    if !Path::new("save").exists() {
+        if let Err(e) = std::fs::create_dir_all("save") {
+            println!("Erreur lors de la création du dossier de sauvegarde: {}", e);
+        }
+    }
+    
+    // Réinitialiser les informations de slot
+    slot_info.info = vec![None, None, None];
+    
+    // Vérifier chaque slot
+    for i in 0..3 {
+        let file_path = format!("save/player_slot_{}.json", i + 1);
+        if Path::new(&file_path).exists() {
+            // Tenter de lire le fichier JSON pour extraire le nom du joueur
+            match File::open(&file_path) {
+                Ok(file) => {
+                    match serde_json::from_reader::<_, Value>(file) {
+                        Ok(json) => {
+                            // Parcourir les entrées (niveaux)
+                            if let Some(obj) = json.as_object() {
+                                for (_, player_data) in obj {
+                                    // Accéder à caracter.name
+                                    if let Some(character) = player_data.get("caracter") {
+                                        if let Some(name) = character.get("name").and_then(|n| n.as_str()) {
+                                            slot_info.info[i] = Some(name.to_string());
+                                            break; // On prend le premier personnage trouvé
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        Err(e) => println!("Erreur lors de la lecture du JSON pour le slot {}: {}", i + 1, e),
+                    }
+                },
+                Err(e) => println!("Erreur lors de l'ouverture du fichier pour le slot {}: {}", i + 1, e),
+            }
+        }
+    }
+}
+
 /// Système pour initialiser l'écran de sélection de slot
-pub fn setup_player_slot_screen(mut commands: Commands) {
+pub fn setup_player_slot_screen(mut commands: Commands, slot_info: Res<SlotInfo>) {
     commands.spawn((
         Node {
             width: Val::Percent(100.0),
@@ -84,8 +151,12 @@ pub fn setup_player_slot_screen(mut commands: Commands) {
                     .with_children(|button| {
                         button.spawn(Text::new(format!("Slot {}", i + 1)));
                         
-                        // On pourrait ajouter ici des informations sur le slot
-                        button.spawn(Text::new("Vide"));
+                        // Afficher le nom du personnage s'il existe, sinon "Vide"
+                        let slot_text = match &slot_info.info[i] {
+                            Some(name) => name.clone(),
+                            None => "Vide".to_string(),
+                        };
+                        button.spawn(Text::new(slot_text));
                     });
             }
         });
@@ -139,16 +210,14 @@ pub fn update_slot_selection(
     selected_slot: Res<SelectedPlayerSlot>,
     mut slot_buttons: Query<(&ButtonAction, &mut BackgroundColor, &mut BorderColor)>,
 ) {
-    if selected_slot.is_changed() {
-        for (action, mut bg_color, mut border_color) in slot_buttons.iter_mut() {
-            if let ButtonAction::SelectSlot(slot_index) = action {
-                if selected_slot.slot == Some(*slot_index) {
-                    *bg_color = BackgroundColor(SELECTED_BUTTON);
-                    *border_color = BorderColor(BLUE);
-                } else {
-                    *bg_color = BackgroundColor(NORMAL_BUTTON);
-                    *border_color = BorderColor(BLACK);
-                }
+    for (action, mut bg_color, mut border_color) in slot_buttons.iter_mut() {
+        if let ButtonAction::SelectSlot(slot_index) = action {
+            if selected_slot.slot == Some(*slot_index) {
+                *bg_color = BackgroundColor(SELECTED_BUTTON);
+                *border_color = BorderColor(BLUE);
+            } else {
+                *bg_color = BackgroundColor(NORMAL_BUTTON);
+                *border_color = BorderColor(BLACK);
             }
         }
     }

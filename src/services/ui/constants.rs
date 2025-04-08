@@ -23,7 +23,8 @@ pub enum AppState {
     Levels, 
     Fight,
     PlayerSlot,
-    LevelsScreen
+    LevelsScreen,
+    PlayerCreation,
 }
 
 // Actions des boutons
@@ -64,4 +65,5 @@ pub struct MasterList {
 #[derive(Resource)]
 pub struct PlayerResource {
     player: Player,
+    CreatePlayer,
 }

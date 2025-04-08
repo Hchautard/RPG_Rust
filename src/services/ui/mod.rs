@@ -5,3 +5,4 @@ pub mod game_screen;
 pub mod player_slot_screen;
 pub mod select_level;
 pub mod combat_screen;
+pub mod player_creation_screen;

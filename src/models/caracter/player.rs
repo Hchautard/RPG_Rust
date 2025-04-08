@@ -1,9 +1,8 @@
 use crate::models::{aptitude::Aptitude, badge::Badge, ingredient::Ingredient};
-
 use super::caracter::Caracter;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Player {
     pub caracter: Caracter,
     pub badge: Badge,

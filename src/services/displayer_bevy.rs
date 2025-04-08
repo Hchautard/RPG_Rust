@@ -19,6 +19,8 @@ use crate::services::ui::combat_screen::{ CombatScreenPlugin};
 
 use crate::services::ui::main_menu::{setup_main_menu, despawn_main_menu};
 use crate::services::ui::game_screen::{setup_game, despawn_game};
+use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};
+use crate::services::ui::player_creation_screen::{PlayerCreationPlugin, PlayerCreationData, create_player};
 
 #[derive(Component)]
 struct MainMenu;
@@ -43,11 +45,13 @@ impl Plugin for DisplayerBevy {
 
             .add_systems(OnEnter(AppState::Game), setup_game)
             .add_systems(OnExit(AppState::Game), despawn_game)
-            
-        
             .add_plugins(LevelsScreenPlugin)
             .add_plugins(CombatScreenPlugin)
-            .add_plugins(PlayerSlotScreenPlugin);
+            // Ajout du plugin pour les slots de joueur
+            .add_plugins(PlayerSlotScreenPlugin)
+            
+            // Ajout du plugin pour la création de personnage
+            .add_plugins(PlayerCreationPlugin);
     }
 }
 
@@ -66,6 +70,8 @@ impl DisplayerBevy {
             .add_plugins(DisplayerBevy::new(Vec::new()))
             .insert_resource(LevelList { levels: Vec::new() })
             .init_resource::<SelectedPlayerSlot>()
+            .init_resource::<PlayerCreationData>()
+            .add_plugins(DisplayerBevy::new())
             .run();
 
         Ok(())
@@ -137,8 +143,14 @@ fn button_system(
                     }
                     ButtonAction::ConfirmSlot => {
                         if selected_slot.slot.is_some() {
-                            app_state.set(AppState::Game);
+                            // Aller à l'écran de création de personnage plutôt qu'au jeu
+                            app_state.set(AppState::PlayerCreation);
                         }
+                    }
+                    ButtonAction::CreatePlayer => {
+                        // Créer le personnage et démarrer le jeu
+                        let player = create_player(&PlayerCreationData::default()); // Idéalement, utiliser les vraies données
+                        app_state.set(AppState::Game);
                     }
                 }
             }
