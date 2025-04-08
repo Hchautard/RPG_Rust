@@ -107,5 +107,4 @@ impl Game {
         let mut displayer_bevy: displayer_bevy::DisplayerBevy = displayer_bevy::DisplayerBevy::new(self.masters);
         displayer_bevy.run(&self.aptitudes);
     }
-
 }
