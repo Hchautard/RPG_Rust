@@ -19,6 +19,7 @@ pub enum AppState {
     Aptitudes,
     Game,
     PlayerSlot,
+    PlayerCreation,
 }
 
 // Actions des boutons
@@ -31,4 +32,5 @@ pub enum ButtonAction {
     Back,
     SelectSlot(usize),
     ConfirmSlot,
+    CreatePlayer,
 }

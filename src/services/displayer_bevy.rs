@@ -12,6 +12,7 @@ use crate::services::ui::aptitudes_screen::{AptitudeList, setup_aptitudes_screen
 use crate::services::ui::main_menu::{setup_main_menu, despawn_main_menu};
 use crate::services::ui::game_screen::{setup_game, despawn_game};
 use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};
+use crate::services::ui::player_creation_screen::{PlayerCreationPlugin, PlayerCreationData, create_player};
 
 pub struct DisplayerBevy;
 
@@ -34,7 +35,10 @@ impl Plugin for DisplayerBevy {
             .add_systems(OnExit(AppState::Game), despawn_game)
             
             // Ajout du plugin pour les slots de joueur
-            .add_plugins(PlayerSlotScreenPlugin);
+            .add_plugins(PlayerSlotScreenPlugin)
+            
+            // Ajout du plugin pour la création de personnage
+            .add_plugins(PlayerCreationPlugin);
     }
 }
 
@@ -48,6 +52,7 @@ impl DisplayerBevy {
             .add_plugins(DefaultPlugins)
             .insert_resource(AptitudeList { aptitudes: aptitudes.to_vec() })
             .init_resource::<SelectedPlayerSlot>()
+            .init_resource::<PlayerCreationData>()
             .add_plugins(DisplayerBevy::new())
             .run();
 
@@ -104,8 +109,14 @@ fn button_system(
                     }
                     ButtonAction::ConfirmSlot => {
                         if selected_slot.slot.is_some() {
-                            app_state.set(AppState::Game);
+                            // Aller à l'écran de création de personnage plutôt qu'au jeu
+                            app_state.set(AppState::PlayerCreation);
                         }
+                    }
+                    ButtonAction::CreatePlayer => {
+                        // Créer le personnage et démarrer le jeu
+                        let player = create_player(&PlayerCreationData::default()); // Idéalement, utiliser les vraies données
+                        app_state.set(AppState::Game);
                     }
                 }
             }

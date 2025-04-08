@@ -141,4 +141,11 @@ impl JsonLoader {
         Ok(())
     }
 
+    pub fn ensure_save_directory() {
+        use std::fs;
+        if let Err(e) = fs::create_dir_all("save") {
+            println!("Erreur lors de la création du dossier de sauvegarde: {}", e);
+        }
+    }
+
 }
