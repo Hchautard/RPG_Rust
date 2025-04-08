@@ -30,6 +30,40 @@ impl JsonLoader {
         Ok(badges)
     }
 
+    pub fn load_json_players(file_path: &str) -> Result<Vec<Player>, Box<dyn std::error::Error>> {
+        let mut file = File::open(file_path)?;
+        let mut data = String::new();
+        file.read_to_string(&mut data)?;
+
+        let players_map: serde_json::Map<String, serde_json::Value> = serde_json::from_str(&data)?;
+
+        let mut players = Vec::new();
+        for (_level, value) in players_map {
+            let player: Player = serde_json::from_value(value)?;
+            players.push(player);
+        }
+
+        Ok(players)
+    }
+
+    pub fn load_player_by_level(file_path: &str, level: u32) -> Result<Option<Player>, Box<dyn std::error::Error>> {
+        let mut file = File::open(file_path)?;
+        let mut data = String::new();
+        file.read_to_string(&mut data)?;
+    
+        let players_map: serde_json::Map<String, serde_json::Value> = serde_json::from_str(&data)?;
+    
+        let level_str = level.to_string();
+        if let Some(value) = players_map.get(&level_str) {
+            let player: Player = serde_json::from_value(value.clone())?;
+            Ok(Some(player))
+        } else {
+            Ok(None)
+        }
+    }
+    
+
+
     pub fn loadJsonMasters(file_path: &str)  -> Result<Vec<Master>, Box<dyn std::error::Error>> {
         let mut file = File::open(file_path)?;
         let mut data = String::new();
