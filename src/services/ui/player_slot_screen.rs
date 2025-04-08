@@ -135,20 +135,21 @@ pub fn setup_player_slot_screen(mut commands: Commands) {
 }
 
 /// Système pour mettre à jour la sélection de slot
+/// Système pour mettre à jour la sélection de slot
 pub fn update_slot_selection(
     selected_slot: Res<SelectedPlayerSlot>,
     mut slot_buttons: Query<(&ButtonAction, &mut BackgroundColor, &mut BorderColor)>,
 ) {
-    if selected_slot.is_changed() {
-        for (action, mut bg_color, mut border_color) in slot_buttons.iter_mut() {
-            if let ButtonAction::SelectSlot(slot_index) = action {
-                if selected_slot.slot == Some(*slot_index) {
-                    *bg_color = BackgroundColor(SELECTED_BUTTON);
-                    *border_color = BorderColor(BLUE);
-                } else {
-                    *bg_color = BackgroundColor(NORMAL_BUTTON);
-                    *border_color = BorderColor(BLACK);
-                }
+    // Il faut exécuter ce code pas seulement quand selected_slot change
+    // mais à chaque frame pour s'assurer que les couleurs sont toujours correctes
+    for (action, mut bg_color, mut border_color) in slot_buttons.iter_mut() {
+        if let ButtonAction::SelectSlot(slot_index) = action {
+            if selected_slot.slot == Some(*slot_index) {
+                *bg_color = BackgroundColor(SELECTED_BUTTON);
+                *border_color = BorderColor(BLUE);
+            } else {
+                *bg_color = BackgroundColor(NORMAL_BUTTON);
+                *border_color = BorderColor(BLACK);
             }
         }
     }

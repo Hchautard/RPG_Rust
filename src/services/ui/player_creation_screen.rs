@@ -5,6 +5,7 @@ use crate::models::aptitude::Aptitude;
 use crate::models::caracter::player::Player;
 use crate::models::badge::Badge;
 use crate::models::ingredient::Ingredient;
+use bevy::ecs::system::ParamSet;
 
 /// Composant pour marquer les entités de l'écran de création de personnage
 #[derive(Component)]
@@ -123,39 +124,7 @@ pub fn setup_player_creation_screen(
                                 ..Default::default()
                             },
                             BorderColor(BLACK),
-                            BackgroundColor(WHITE),
                             TextInput::Name,
-                        ))
-                        .with_children(|input| {
-                            input.spawn(Text::new("Cliquez pour saisir"));
-                        });
-                    });
-
-                    // Champ Style
-                    form.spawn(Node {
-                        display: Display::Flex,
-                        flex_direction: FlexDirection::Row,
-                        align_items: AlignItems::Center,
-                        margin: UiRect::vertical(Val::Px(10.0)),
-                        ..Default::default()
-                    })
-                    .with_children(|row| {
-                        row.spawn(Text::new("Style de combat:"));
-                        row.spawn((
-                            Button,
-                            Node {
-                                width: Val::Px(200.0),
-                                height: Val::Px(30.0),
-                                margin: UiRect::left(Val::Px(10.0)),
-                                display: Display::Flex,
-                                justify_content: JustifyContent::FlexStart,
-                                align_items: AlignItems::Center,
-                                padding: UiRect::horizontal(Val::Px(10.0)),
-                                ..Default::default()
-                            },
-                            BorderColor(BLACK),
-                            BackgroundColor(WHITE),
-                            TextInput::Style,
                         ))
                         .with_children(|input| {
                             input.spawn(Text::new("Cliquez pour saisir"));
@@ -309,7 +278,7 @@ pub fn despawn_player_creation_screen(
     }
 }
 
-// Système de gestion des saisies texte (simulé pour la démo)
+// Système de gestion des saisies texte (simplifié avec noms aléatoires)
 pub fn handle_text_input(
     mut interaction_query: Query<(&Interaction, &TextInput, &Children), (Changed<Interaction>, With<Button>)>,
     mut text_query: Query<&mut Text>,
@@ -317,20 +286,45 @@ pub fn handle_text_input(
 ) {
     for (interaction, input_type, children) in interaction_query.iter_mut() {
         if let Interaction::Pressed = *interaction {
-            // Dans un vrai système, on utiliserait un événement pour ouvrir une boîte de dialogue de saisie
-            // Pour l'exemple, on met juste une valeur par défaut
-            match input_type {
+            // Utiliser un nom aléatoire au lieu d'une saisie réelle
+            match *input_type {  // Déréférencer input_type ici
                 TextInput::Name => {
-                    creation_data.name = "Héros".to_string();
-                    if let Ok(mut text) = text_query.get_mut(children[0]) {
-                        // Remplacer le Text entier au lieu d'accéder aux sections
+                    // Liste de noms de héros aléatoires
+                    let hero_names = [
+                        "Aragorn", "Legolas", "Gandalf", "Frodo", "Gimli",
+                        "Thorin", "Elendil", "Boromir", "Faramir", "Eomer",
+                        "Drizzt", "Artemis", "Conan", "Geralt", "Ciri",
+                        "Galadriel", "Arwen", "Eowyn", "Luthien", "Tauriel"
+                    ];
+                    
+                    // Choisir un nom aléatoire
+                    let random_index = (std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() % hero_names.len() as u128) as usize;
+                    
+                    creation_data.name = hero_names[random_index].to_string();
+                    
+                    if let Ok(mut text) = text_query.get_mut(*children.first().unwrap()) {
                         *text = Text::new(creation_data.name.clone());
                     }
-                }
+                },
                 TextInput::Style => {
-                    creation_data.style = "Offensif".to_string();
-                    if let Ok(mut text) = text_query.get_mut(children[0]) {
-                        // Remplacer le Text entier au lieu d'accéder aux sections
+                    // Styles de combat aléatoires
+                    let combat_styles = [
+                        "Offensif", "Défensif", "Équilibré", "Furtif", "Agressif",
+                        "Stratégique", "Acrobatique", "Magique", "Technique", "Berserker"
+                    ];
+                    
+                    // Choisir un style aléatoire
+                    let random_index = (std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() % combat_styles.len() as u128) as usize;
+                    
+                    creation_data.style = combat_styles[random_index].to_string();
+                    
+                    if let Ok(mut text) = text_query.get_mut(*children.first().unwrap()) {
                         *text = Text::new(creation_data.style.clone());
                     }
                 }
@@ -341,38 +335,92 @@ pub fn handle_text_input(
 
 // Système de gestion de la sélection de badge
 pub fn handle_badge_selection(
-    mut interaction_query: Query<(&Interaction, &BadgeChoice, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
+    mut params: ParamSet<(
+        Query<(&Interaction, &BadgeChoice), (Changed<Interaction>, With<Button>)>,
+        Query<(&BadgeChoice, &mut BackgroundColor), With<Button>>
+    )>,
     mut creation_data: ResMut<PlayerCreationData>,
 ) {
-    for (interaction, badge_choice, mut bg_color) in interaction_query.iter_mut() {
+    // Étape 1: Trouver quel badge a été cliqué
+    let mut clicked_index = None;
+    
+    for (interaction, badge_choice) in params.p0().iter() {
         if let Interaction::Pressed = *interaction {
-            // Sélectionne ce badge
-            creation_data.selected_badge_index = Some(badge_choice.0);
+            clicked_index = Some(badge_choice.0);
+            break;
+        }
+    }
+    
+    // Si un badge a été cliqué
+    if let Some(index) = clicked_index {
+        // Si on clique sur un badge déjà sélectionné, on le désélectionne
+        if creation_data.selected_badge_index == Some(index) {
+            creation_data.selected_badge_index = None;
             
-            // Dans un vrai système, on mettrait à jour les couleurs de tous les badges
-            *bg_color = BackgroundColor(GREEN);
+            // Mise à jour des couleurs des boutons
+            for (choice, mut bg_color) in params.p1().iter_mut() {
+                if choice.0 == index {
+                    *bg_color = BackgroundColor(NORMAL_BUTTON);
+                }
+            }
+        } else {
+            // Remplace la sélection actuelle par le nouveau badge
+            let previous_selection = creation_data.selected_badge_index;
+            creation_data.selected_badge_index = Some(index);
+            
+            // Mise à jour des couleurs de tous les boutons
+            for (choice, mut bg_color) in params.p1().iter_mut() {
+                if choice.0 == index {
+                    *bg_color = BackgroundColor(GREEN);
+                } else if previous_selection == Some(choice.0) {
+                    // Réinitialiser le bouton précédemment sélectionné
+                    *bg_color = BackgroundColor(NORMAL_BUTTON);
+                }
+            }
         }
     }
 }
 
 // Système de gestion de la sélection d'aptitudes
 pub fn handle_aptitude_selection(
-    mut interaction_query: Query<(&Interaction, &AptitudeChoice, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
+    mut params: ParamSet<(
+        Query<(&Interaction, &AptitudeChoice), (Changed<Interaction>, With<Button>)>,
+        Query<(&AptitudeChoice, &mut BackgroundColor), With<Button>>
+    )>,
     mut creation_data: ResMut<PlayerCreationData>,
 ) {
-    for (interaction, aptitude_choice, mut bg_color) in interaction_query.iter_mut() {
+    let mut clicked_index = None;
+    
+    for (interaction, aptitude_choice) in params.p0().iter() {
         if let Interaction::Pressed = *interaction {
-            let index = aptitude_choice.0;
+            clicked_index = Some(aptitude_choice.0);
+            break;
+        }
+    }
+    
+    // Si une aptitude a été cliquée
+    if let Some(index) = clicked_index {
+        // Si on clique sur une aptitude déjà sélectionnée, on la désélectionne
+        if creation_data.selected_aptitudes.contains(&index) {
+            creation_data.selected_aptitudes.retain(|&i| i != index);
             
-            // Toggle l'aptitude (ajoute ou supprime)
-            if creation_data.selected_aptitudes.contains(&index) {
-                creation_data.selected_aptitudes.retain(|&i| i != index);
-                *bg_color = BackgroundColor(NORMAL_BUTTON);
-            } else {
-                // Limite à 3 aptitudes max (exemple)
-                if creation_data.selected_aptitudes.len() < 3 {
-                    creation_data.selected_aptitudes.push(index);
+            // Mise à jour des couleurs des boutons
+            for (choice, mut bg_color) in params.p1().iter_mut() {
+                if choice.0 == index {
+                    *bg_color = BackgroundColor(NORMAL_BUTTON);
+                }
+            }
+        } else {
+            // Remplace la sélection actuelle par la nouvelle aptitude
+            creation_data.selected_aptitudes.clear();
+            creation_data.selected_aptitudes.push(index);
+            
+            // Mise à jour des couleurs de tous les boutons
+            for (choice, mut bg_color) in params.p1().iter_mut() {
+                if choice.0 == index {
                     *bg_color = BackgroundColor(GREEN);
+                } else {
+                    *bg_color = BackgroundColor(NORMAL_BUTTON);
                 }
             }
         }
