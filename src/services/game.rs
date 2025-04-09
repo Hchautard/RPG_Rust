@@ -73,6 +73,15 @@ impl Game {
                 vec![]
             }
         };
+
+        self.masters = match JsonLoader::loadJsonMasters("assets/masters.json") {
+            Ok(masters) => {
+                masters
+            },
+            Err(e) => {
+                vec![]
+            }
+        };
     }
 
     pub fn init_round(&mut self){
@@ -95,8 +104,7 @@ impl Game {
 
     pub fn display(self){    
 
-        let rs: Vec<Master> = vec![Master::new("name", "style", 100, 100, 10, "job", vec!["dialog1".to_string(), "dialog2".to_string()], Badge::new("badge", vec!["badge1".to_string()]), vec!["attack1".to_string(), "attack2".to_string()])];
-        let mut displayer_bevy: displayer_bevy::DisplayerBevy = displayer_bevy::DisplayerBevy::new(rs);
+        let mut displayer_bevy: displayer_bevy::DisplayerBevy = displayer_bevy::DisplayerBevy::new(self.masters);
         displayer_bevy.run(&self.aptitudes);
     }
 
