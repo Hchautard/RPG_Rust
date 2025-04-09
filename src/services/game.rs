@@ -1,8 +1,8 @@
 use std::ptr::null;
 
-use crate::models::{round::Round, aptitude::Aptitude, arena::Arena, badge::Badge, caracter::{bouncer::Bouncer, client::Client, master::Master, player::{self, Player}, trader::Trader}, ingredient::Ingredient};
+use crate::models::{aptitude::Aptitude, arena::Arena, badge::Badge, caracter::{bouncer::Bouncer, client::Client, master::{self, Master}, player::{self, Player}, trader::Trader}, ingredient::Ingredient, round::Round};
 
-use super::Json_loader::JsonLoader;
+use super::json_loader::JsonLoader;
 use  crate::displayer_bevy;
 
 
@@ -93,8 +93,10 @@ impl Game {
 
     }
 
-    pub fn display(&self){    
-        let mut displayer_bevy: displayer_bevy::DisplayerBevy = displayer_bevy::DisplayerBevy::new();
+    pub fn display(self){    
+
+        let rs: Vec<Master> = vec![Master::new("name", "style", 100, 100, 10, "job", vec!["dialog1".to_string(), "dialog2".to_string()], Badge::new("badge", vec!["badge1".to_string()]), vec!["attack1".to_string(), "attack2".to_string()])];
+        let mut displayer_bevy: displayer_bevy::DisplayerBevy = displayer_bevy::DisplayerBevy::new(rs);
         displayer_bevy.run(&self.aptitudes);
     }
 

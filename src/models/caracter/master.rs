@@ -2,6 +2,8 @@ use crate::models::badge::Badge;
 
 use super::pnj::Pnj;
 
+
+#[derive(Clone)]
 pub struct Master {
     pub pnj: Pnj,
     pub badge : Badge,

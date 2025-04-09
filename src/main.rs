@@ -2,7 +2,6 @@
 mod services{
     pub mod json_loader;
     pub mod displayer;
-    pub mod Json_loader;
     pub mod game;
     pub mod combat_state;
     pub mod displayer_bevy;
@@ -47,8 +46,6 @@ fn main() -> io::Result<()> {
     // let mut displayer = Displayer::new()?;
     // displayer.show_menu(&aptitudes)?;
     // displayer.cleanup()?;
-    let mut displayer_bevy = displayer_bevy::DisplayerBevy::new();
-    displayer_bevy.run(&aptitudes);
     let mut Game = services::game::Game::new(1);
     Game.init();
     Game.display();
