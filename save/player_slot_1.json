@@ -3,7 +3,7 @@
     "aptitudes": [
       {
         "description": "Description de l'aptitude",
-        "name": "Aptitude 3",
+        "name": "Aptitude 1",
         "power": 5.0,
         "pp": 10
       }
@@ -13,17 +13,18 @@
         "Feature 1",
         "Feature 2"
       ],
-      "name": "Badge 2"
+      "name": "Badge 1"
     },
     "caracter": {
       "bankroll": 0,
       "hp": 100,
-      "name": "Ciri",
+      "name": "Tauriel",
       "pp": 50,
       "style": ""
     },
     "inventory": [],
     "level": 1,
+    "max_hp": 0,
     "reputation": 0
   }
 }

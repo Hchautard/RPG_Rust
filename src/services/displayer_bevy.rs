@@ -19,7 +19,6 @@ use crate::services::ui::combat_screen::{ CombatScreenPlugin};
 
 use crate::services::ui::main_menu::{setup_main_menu, despawn_main_menu};
 use crate::services::ui::game_screen::{setup_game, despawn_game};
-use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};
 use crate::services::ui::player_creation_screen::{PlayerCreationPlugin, PlayerCreationData, create_player};
 
 #[derive(Component)]
@@ -71,7 +70,6 @@ impl DisplayerBevy {
             .insert_resource(LevelList { levels: Vec::new() })
             .init_resource::<SelectedPlayerSlot>()
             .init_resource::<PlayerCreationData>()
-            .add_plugins(DisplayerBevy::new())
             .run();
 
         Ok(())
@@ -125,7 +123,10 @@ fn button_system(
                         println!("Ce niveau est verrouillé!");
                     }
                     ButtonAction::SelectLevel(level) =>{
-
+                            //app_state.s
+                            app_state.set(AppState::Fight);
+                            println!("Ce niveau est de!");
+                
                     }
                     ButtonAction::Quit => {
                         std::process::exit(0);
@@ -150,7 +151,7 @@ fn button_system(
                     ButtonAction::CreatePlayer => {
                         // Créer le personnage et démarrer le jeu
                         let player = create_player(&PlayerCreationData::default()); // Idéalement, utiliser les vraies données
-                        app_state.set(AppState::Game);
+                        app_state.set(AppState::Levels);
                     }
                 }
             }

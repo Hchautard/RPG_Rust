@@ -499,5 +499,6 @@ pub fn create_player(creation_data: &PlayerCreationData) -> Player {
         badge,
         Vec::<Ingredient>::new(), // Inventaire vide pour commencer
         aptitudes,
+        0
     )
 }

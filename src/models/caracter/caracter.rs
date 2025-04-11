@@ -1,7 +1,7 @@
 use serde_derive::{Deserialize, Serialize};
 
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Caracter {
     pub name: String,
     pub style: String,

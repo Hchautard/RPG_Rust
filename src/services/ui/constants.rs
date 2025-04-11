@@ -24,7 +24,7 @@ pub enum AppState {
     Fight,
     PlayerSlot,
     LevelsScreen,
-    PlayerCreation,
+    PlayerCreation
 }
 
 // Actions des boutons
@@ -39,7 +39,8 @@ pub enum ButtonAction {
     ConfirmSlot,
     StartFight,
     SelectLevel(Level),  
-    Locked,         
+    CreatePlayer,
+    Locked
 }
 
 
@@ -49,7 +50,8 @@ pub struct Level {
     pub name: String,
     pub image: Handle<Image>,
     pub is_locked: bool, 
-    pub boss_name: String,
+    pub master: Master,
+    pub cocktail_image: Handle<Image>,
 }
 
 #[derive(Resource)]
@@ -62,8 +64,3 @@ pub struct MasterList {
     pub masters: Vec<Master>,
 }
 
-#[derive(Resource)]
-pub struct PlayerResource {
-    player: Player,
-    CreatePlayer,
-}

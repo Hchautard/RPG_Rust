@@ -2,7 +2,7 @@ use super::caracter::Caracter;
 use serde_derive::{Deserialize, Serialize};
 
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Pnj {
     pub caracter: Caracter,
     pub job: String,
