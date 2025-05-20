@@ -4,7 +4,7 @@ use crate::models::aptitude::Aptitude;
 
 // Import des constantes et états
 use crate::services::ui::constants::{
-    AppState, ButtonAction, 
+    AppState, ButtonAction, GameLoadContext,
     NORMAL_BUTTON, BLACK, WHITE, RED, GREEN, BLUE, SELECTED_BUTTON
 };
 // Import des ressources et composants depuis les sous-modules
@@ -13,12 +13,14 @@ use crate::services::ui::main_menu::{setup_main_menu, despawn_main_menu};
 use crate::services::ui::game_screen::{setup_game, despawn_game};
 use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};
 use crate::services::ui::player_creation_screen::{PlayerCreationPlugin, PlayerCreationData, create_player};
+use crate::services::ui::start_screen::StartScreenPlugin;
 
 pub struct DisplayerBevy;
 
 impl Plugin for DisplayerBevy {
     fn build(&self, app: &mut App) {
         app.init_state::<AppState>()
+            .init_resource::<GameLoadContext>()
             .add_systems(Startup, setup)
             .add_systems(Update, button_system)
 
@@ -38,7 +40,10 @@ impl Plugin for DisplayerBevy {
             .add_plugins(PlayerSlotScreenPlugin)
             
             // Ajout du plugin pour la création de personnage
-            .add_plugins(PlayerCreationPlugin);
+            .add_plugins(PlayerCreationPlugin)
+            
+            // Ajout du plugin pour l'écran de démarrage (contenu de sauvegarde)
+            .add_plugins(StartScreenPlugin);
     }
 }
 
@@ -53,6 +58,7 @@ impl DisplayerBevy {
             .insert_resource(AptitudeList { aptitudes: aptitudes.to_vec() })
             .init_resource::<SelectedPlayerSlot>()
             .init_resource::<PlayerCreationData>()
+            .init_resource::<GameLoadContext>()
             .add_plugins(DisplayerBevy::new())
             .run();
 
@@ -73,6 +79,7 @@ fn button_system(
     ), (Changed<Interaction>, With<Button>)>,
     mut app_state: ResMut<NextState<AppState>>,
     mut selected_slot: ResMut<SelectedPlayerSlot>,
+    mut game_load_context: ResMut<GameLoadContext>,
 ) {
     for (
         interaction, 
@@ -88,11 +95,13 @@ fn button_system(
                 // Gestion des actions
                 match action {
                     ButtonAction::NewGame => {
-                        // Aller à l'écran de sélection de slot au lieu d'aller directement au jeu
+                        // Marquer le contexte comme "nouveau jeu"
+                        game_load_context.is_load_game = false;
                         app_state.set(AppState::PlayerSlot);
                     }
                     ButtonAction::LoadGame => {
-                        // Pour le chargement aussi, on passe par la sélection de slot
+                        // Marquer le contexte comme "charger jeu"
+                        game_load_context.is_load_game = true;
                         app_state.set(AppState::PlayerSlot);
                     }
                     ButtonAction::ShowAptitudes => {
@@ -109,13 +118,22 @@ fn button_system(
                     }
                     ButtonAction::ConfirmSlot => {
                         if selected_slot.slot.is_some() {
-                            // Aller à l'écran de création de personnage plutôt qu'au jeu
-                            app_state.set(AppState::PlayerCreation);
+                            // Si on vient de LoadGame, aller à l'écran de démarrage
+                            // Sinon, aller à la création de personnage
+                            if game_load_context.is_load_game {
+                                app_state.set(AppState::StartScreen);
+                            } else {
+                                app_state.set(AppState::PlayerCreation);
+                            }
                         }
                     }
                     ButtonAction::CreatePlayer => {
                         // Créer le personnage et démarrer le jeu
                         let player = create_player(&PlayerCreationData::default()); // Idéalement, utiliser les vraies données
+                        app_state.set(AppState::Game);
+                    }
+                    ButtonAction::StartGame => {
+                        // Démarrer le jeu après avoir vu le contenu de la sauvegarde
                         app_state.set(AppState::Game);
                     }
                 }

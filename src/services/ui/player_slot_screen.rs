@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::services::ui::constants::{AppState, ButtonAction, NORMAL_BUTTON, SELECTED_BUTTON, WHITE, BLACK, BLUE};
+use crate::services::ui::constants::{AppState, ButtonAction, GameLoadContext, NORMAL_BUTTON, SELECTED_BUTTON, WHITE, BLACK, BLUE};
 use crate::services::json_loader::JsonLoader;
 use std::fs::File;
 use std::path::Path;
@@ -54,7 +54,6 @@ impl Default for SelectedPlayerSlot {
 }
 
 /// Système pour charger les informations des slots
-/// Système pour charger les informations des slots
 pub fn load_player_slots(mut slot_info: ResMut<SlotInfo>) {
     // S'assurer que le dossier de sauvegarde existe
     if !Path::new("save").exists() {
@@ -98,7 +97,24 @@ pub fn load_player_slots(mut slot_info: ResMut<SlotInfo>) {
 }
 
 /// Système pour initialiser l'écran de sélection de slot
-pub fn setup_player_slot_screen(mut commands: Commands, slot_info: Res<SlotInfo>) {
+pub fn setup_player_slot_screen(
+    mut commands: Commands, 
+    slot_info: Res<SlotInfo>,
+    game_context: Res<GameLoadContext>
+) {
+    // Ajuster le titre et le texte du bouton en fonction du contexte
+    let screen_title = if game_context.is_load_game {
+        "Choisissez une sauvegarde à charger"
+    } else {
+        "Choisissez un slot pour la nouvelle partie"
+    };
+    
+    let confirm_button_text = if game_context.is_load_game {
+        "Charger"
+    } else {
+        "Confirmer"
+    };
+
     commands.spawn((
         Node {
             width: Val::Percent(100.0),
@@ -113,8 +129,8 @@ pub fn setup_player_slot_screen(mut commands: Commands, slot_info: Res<SlotInfo>
         PlayerSlotScreen,
     ))
     .with_children(|parent| {
-        // Titre de l'écran
-        parent.spawn(Text::new("Choisissez un slot de sauvegarde"));
+        // Titre de l'écran adapté au contexte
+        parent.spawn(Text::new(screen_title));
 
         // Container pour les slots
         parent.spawn((
@@ -161,7 +177,7 @@ pub fn setup_player_slot_screen(mut commands: Commands, slot_info: Res<SlotInfo>
             }
         });
 
-        // Bouton de confirmation
+        // Bouton de confirmation avec texte adapté au contexte
         parent
             .spawn((
                 Button,
@@ -179,7 +195,7 @@ pub fn setup_player_slot_screen(mut commands: Commands, slot_info: Res<SlotInfo>
                 ButtonAction::ConfirmSlot,
             ))
             .with_children(|button| {
-                button.spawn(Text::new("Confirmer"));
+                button.spawn(Text::new(confirm_button_text));
             });
 
         // Bouton retour

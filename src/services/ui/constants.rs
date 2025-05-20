@@ -20,6 +20,7 @@ pub enum AppState {
     Game,
     PlayerSlot,
     PlayerCreation,
+    StartScreen,
 }
 
 // Actions des boutons
@@ -33,4 +34,10 @@ pub enum ButtonAction {
     SelectSlot(usize),
     ConfirmSlot,
     CreatePlayer,
+    StartGame,
+}
+
+#[derive(Resource, Default)]
+pub struct GameLoadContext {
+    pub is_load_game: bool,
 }
