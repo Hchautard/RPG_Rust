@@ -1,8 +1,7 @@
 use super::caracter::Caracter;
 use serde_derive::{Deserialize, Serialize};
 
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]  // Ajout de Clone ici
 pub struct Pnj {
     pub caracter: Caracter,
     pub job: String,
@@ -21,5 +20,4 @@ impl Pnj {
     pub fn talk(&self) {
         println!("{}: {}", self.caracter.name, self.dialogs[0]);
     }
-
 }
