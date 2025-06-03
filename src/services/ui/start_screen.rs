@@ -18,7 +18,7 @@ pub struct StartScreenText {
 impl Default for StartScreenText {
     fn default() -> Self {
         Self {
-            content: "Aucun contenu chargé.".to_string(),
+            content: "Aucun contenu charge.".to_string(),
         }
     }
 }
@@ -137,7 +137,7 @@ pub fn setup_start_screen(
                 ButtonAction::StartGame,
             ))
             .with_children(|button| {
-                button.spawn(Text::new("Démarrer le jeu"));
+                button.spawn(Text::new("Demarrer le jeu"));
             });
 
         // Bouton retour

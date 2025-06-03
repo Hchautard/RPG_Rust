@@ -48,7 +48,7 @@ impl Displayer {
                 if let event::Event::Key(key) = event::read()? {
                     match key.code {
                         KeyCode::Char('1') => {
-                            println!("Démarrage d'une nouvelle partie...");
+                            println!("Demarrage d'une nouvelle partie...");
                             break;
                         }
                         KeyCode::Char('2') => {

@@ -25,6 +25,7 @@ pub struct GameScreenState {
     pub correct_answer: String,
     pub available_arenas: Vec<(String, String)>, // (nom, thème)
     pub selected_arena: Option<String>,
+    pub wrong_answer_message: bool, // Pour afficher le message d'erreur
 }
 
 #[derive(Default, PartialEq)]
@@ -93,7 +94,7 @@ fn spawn_main_game_screen(commands: &mut Commands) {
         GameScreen,
     ))
     .with_children(|parent| {
-        parent.spawn(Text::new("Game Screen"));
+        parent.spawn(Text::new(""));
         
         // Bouton pour sélectionner une arène
         parent
@@ -112,7 +113,7 @@ fn spawn_main_game_screen(commands: &mut Commands) {
                 BackgroundColor(NORMAL_BUTTON),
                 GameButtonAction::SelectArena,
             ))
-            .with_child(Text::new("Sélectionner une Arène"));
+            .with_child(Text::new("Selectionner une Arene"));
 
         // Bouton retour
         parent
@@ -151,10 +152,21 @@ fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreen
     ))
     .with_children(|parent| {
         // Titre
-        parent.spawn(Text::new("🏟️ Choisissez votre Arène 🏟️"));
+        parent.spawn(Text::new("Choisissez votre Arene"));
+        
+        // Message d'erreur si mauvaise réponse au bouncer
+        if game_state.wrong_answer_message {
+            parent.spawn((
+                Text::new("Mauvaise reponse ! Vous avez ete expulse de l'entree."),
+                Node {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..Default::default()
+                },
+            ));
+        }
         
         // Description
-        parent.spawn(Text::new("Sélectionnez l'arène dans laquelle vous souhaitez vous battre"));
+        parent.spawn(Text::new("Selectionnez l'arene dans laquelle vous souhaitez vous battre"));
         
         // Container pour les arènes
         parent.spawn(
@@ -192,7 +204,7 @@ fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreen
                     ))
                     .with_children(|button| {
                         button.spawn(Text::new(arena_name.clone()));
-                        button.spawn(Text::new(format!("Thème: {}", arena_theme)));
+                        button.spawn(Text::new(format!("Theme: {}", arena_theme)));
                     });
             }
         });
@@ -236,7 +248,7 @@ fn spawn_bouncer_question_screen(commands: &mut Commands, game_state: &GameScree
     .with_children(|parent| {
         // Titre avec l'arène sélectionnée
         if let Some(selected_arena) = &game_state.selected_arena {
-            parent.spawn(Text::new(format!("Arène: {} - Bouncer: Ragnar", selected_arena)));
+            parent.spawn(Text::new(format!("Arene: {} - Bouncer: Ragnar", selected_arena)));
         } else {
             parent.spawn(Text::new("Bouncer: Ragnar"));
         }
@@ -304,9 +316,9 @@ fn spawn_arena_screen(commands: &mut Commands, game_state: &GameScreenState) {
     .with_children(|parent| {
         // Affichage du nom de l'arène
         if let Some(selected_arena) = &game_state.selected_arena {
-            parent.spawn(Text::new(format!("🏆 ARÈNE: {} 🏆", selected_arena)));
+            parent.spawn(Text::new(format!("ARENE: {}", selected_arena)));
         } else {
-            parent.spawn(Text::new("🏆 ARÈNE 🏆"));
+            parent.spawn(Text::new("ARENE"));
         }
         
         // Bouton retour
@@ -346,6 +358,9 @@ pub fn handle_game_button_actions(
             Interaction::Pressed => {
                 match action {
                     GameButtonAction::SelectArena => {
+                        // Réinitialiser le message d'erreur
+                        game_state.wrong_answer_message = false;
+                        
                         // Nettoyer l'écran actuel
                         for entity in game_entities.iter() {
                             commands.entity(entity).despawn_recursive();
@@ -356,6 +371,9 @@ pub fn handle_game_button_actions(
                         spawn_arena_selection_screen(&mut commands, &game_state);
                     }
                     GameButtonAction::ChooseArena(arena_index) => {
+                        // Réinitialiser le message d'erreur
+                        game_state.wrong_answer_message = false;
+                        
                         // Sauvegarder l'arène sélectionnée
                         if let Some((arena_name, _)) = game_state.available_arenas.get(*arena_index) {
                             game_state.selected_arena = Some(arena_name.clone());
@@ -393,12 +411,16 @@ pub fn handle_game_button_actions(
                             game_state.current_screen = GameScreenType::Arena;
                             spawn_arena_screen(&mut commands, &game_state);
                         } else {
-                            // Mauvaise réponse -> Retour au jeu principal
-                            game_state.current_screen = GameScreenType::Main;
-                            spawn_main_game_screen(&mut commands);
+                            // Mauvaise réponse -> Retour à la sélection d'arène avec message d'erreur
+                            game_state.wrong_answer_message = true;
+                            game_state.current_screen = GameScreenType::ArenaSelection;
+                            spawn_arena_selection_screen(&mut commands, &game_state);
                         }
                     }
                     GameButtonAction::BackToArenaSelection => {
+                        // Réinitialiser le message d'erreur
+                        game_state.wrong_answer_message = false;
+                        
                         // Nettoyer l'écran actuel
                         for entity in game_entities.iter() {
                             commands.entity(entity).despawn_recursive();
@@ -409,6 +431,9 @@ pub fn handle_game_button_actions(
                         spawn_arena_selection_screen(&mut commands, &game_state);
                     }
                     GameButtonAction::BackToMainGame => {
+                        // Réinitialiser le message d'erreur
+                        game_state.wrong_answer_message = false;
+                        
                         // Nettoyer l'écran actuel
                         for entity in game_entities.iter() {
                             commands.entity(entity).despawn_recursive();

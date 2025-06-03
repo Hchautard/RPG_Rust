@@ -3,7 +3,7 @@
     "aptitudes": [
       {
         "description": "Description de l'aptitude",
-        "name": "Aptitude 3",
+        "name": "Aptitude 2",
         "power": 5.0,
         "pp": 10
       }
@@ -18,7 +18,7 @@
     "caracter": {
       "bankroll": 0,
       "hp": 100,
-      "name": "Thorin",
+      "name": "Arwen",
       "pp": 50,
       "style": ""
     },

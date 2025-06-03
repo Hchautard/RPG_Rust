@@ -87,7 +87,7 @@ pub fn setup_player_creation_screen(
         .with_children(|parent| {
             // Titre
             parent.spawn(Text::new(format!(
-                "Création de personnage - Slot {}",
+                "Creation de personnage - Slot {}",
                 selected_slot.slot.unwrap_or(0) + 1
             )));
 
@@ -243,7 +243,7 @@ pub fn setup_player_creation_screen(
                             ButtonAction::CreatePlayer,
                         ))
                         .with_children(|button| {
-                            button.spawn(Text::new("Créer personnage"));
+                            button.spawn(Text::new("Creer personnage"));
                         });
 
                         // Bouton Retour
