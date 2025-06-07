@@ -13,12 +13,11 @@ pub struct LevelsScreenPlugin;
 
 impl Plugin for LevelsScreenPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::Levels), setup_levels_screen)
-           .add_systems(OnExit(AppState::LevelsScreen), cleanup_levels_screen);
+        app.add_systems(OnEnter(AppState::Levels), setup_levels_screen)          
+           .add_systems(OnExit(AppState::Levels), cleanup_levels_screen);
     }
 }
 
-/// Création de l'écran des levels
 pub fn setup_levels_screen(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -53,7 +52,7 @@ pub fn setup_levels_screen(
             BackgroundColor(Color::rgb(0.4, 0.4, 0.4)),
         ))
         .with_children(|container| {
-            for level in &level_list.levels {
+            for level in &mut level_list.levels {
                 let button_action = if level.is_locked {
                     ButtonAction::Locked
                 } else {
@@ -65,7 +64,7 @@ pub fn setup_levels_screen(
                     Node {
                         width: Val::Px(250.0),
                         height: Val::Px(400.0),
-                        margin: UiRect::all(Val::Px(10.0)), 
+                        margin: UiRect::all(Val::Px(10.0)),
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         flex_direction: FlexDirection::Column,
@@ -100,7 +99,6 @@ pub fn setup_levels_screen(
                         },
                         BackgroundColor(Color::rgb(0.2, 0.2, 0.2)),
                     ));
-                    
 
                     // Level name
                     card.spawn(Text::from(format!("Level: {}", level.name)));
@@ -113,7 +111,8 @@ pub fn setup_levels_screen(
                         BackgroundColor(Color::rgb(0.3, 0.3, 0.3)),
                     ))
                     .with_children(|b| {
-                        if(level.is_locked) {
+                        // Change the button label based on whether the level is locked or selected
+                        if level.is_locked {
                             b.spawn(Text::from("Locked"));
                         } else {
                             b.spawn(Text::from("Select"));
@@ -124,6 +123,8 @@ pub fn setup_levels_screen(
         });
     });
 }
+
+         
 
 /// Suppression de l'UI quand on quitte l'écran
 fn cleanup_levels_screen(

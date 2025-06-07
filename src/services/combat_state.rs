@@ -16,3 +16,15 @@ pub enum Turn {
     Player,
     Master,
 }
+
+impl Default for CombatState {
+    fn default() -> Self {
+        Self {
+            player: Player::default(), 
+            master: Master::default(), 
+            turn: Turn::Player,
+            started: false,
+            finished: false,
+        }
+    }
+}

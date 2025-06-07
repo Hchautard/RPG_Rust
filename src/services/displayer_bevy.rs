@@ -5,8 +5,7 @@ use bevy::image::Image;
 use crate::models::caracter::caracter::Caracter;
 use crate::models::caracter::player;
 use crate::services::ui::constants::{
-    AppState, ButtonAction, Level,
-    NORMAL_BUTTON, BLACK, WHITE, RED, GREEN, BLUE, SELECTED_BUTTON
+    AppState, ButtonAction, Level, BLACK, BLUE, GREEN, NORMAL_BUTTON, RED, SELECTED_BUTTON, WHITE
 };
 use crate::models::{aptitude::Aptitude, badge::Badge, caracter::{master::Master, player::Player}};
 use super::combat_state::{CombatState, Turn};
@@ -35,7 +34,6 @@ impl Plugin for DisplayerBevy {
         app.init_state::<AppState>()
             .add_systems(Startup, setup)
             .add_systems(Update, button_system)
-
             .add_systems(OnEnter(AppState::MainMenu), setup_main_menu)
             .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)
 
@@ -135,9 +133,16 @@ fn button_system(
                         app_state.set(AppState::MainMenu);
                     }
                     ButtonAction::StartFight => {
-                     //   if let Some(ref combat_state) = combat_state {
-                    //        start_combat(&mut commands, &combat_state.master, &mut app_state);
-                        //}
+                            println!("Début du combat !");
+                            commands.insert_resource(NextState(AppState::Fight));
+                            
+                            // Démarrer le combat
+                            commands.insert_resource(CombatState {
+                                started: true,
+                                finished: false,
+                                turn: Turn::Player,  // Le joueur commence
+                                ..Default::default()
+                            });
                     }
                     ButtonAction::SelectSlot(slot_index) => {
                         selected_slot.slot = Some(*slot_index);
@@ -165,38 +170,7 @@ fn button_system(
             }
         }
     }
-}
 
-
-pub fn start_combat(commands: &mut Commands, mut master: &Master, app_state: &mut ResMut<NextState<AppState>>) {
-   let player = Player {
-        caracter: Caracter {
-            name: "Joueur".to_string(),
-            style: "Joueur".to_string(),
-            hp: 100,
-            pp: 100,
-            bankroll: 0,
-        },
-        max_hp: 100,
-        badge: Badge::new("name", Vec::new()),
-        inventory: vec![],
-        level: 1,
-        reputation: 0,
-        aptitudes: vec![],
-   };
+   
     
-
-    master.clone().pnj.caracter.hp = master.max_hp;
-
-    commands.insert_resource(CombatState {
-        player,
-        turn: Turn::Player,
-        finished: false,
-        started: false,
-        master: master.clone(),
-    });
-
-    app_state.set(AppState::Fight);
 }
-
-

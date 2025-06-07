@@ -1,6 +1,6 @@
 use crate::models::badge::Badge;
 
-use super::pnj::Pnj;
+use super::{caracter::Caracter, pnj::Pnj};
 
 use serde_derive::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -23,5 +23,16 @@ impl Master {
 
     pub fn play(){
         // TODO
+    }
+}
+
+impl Default for Master {
+    fn default() -> Self {
+        Self {
+            pnj: Pnj { caracter: Caracter::new("Boss", "default_style", 150, 30, 0), job: "Master".to_string(), dialogs: vec![] },
+            badge: Badge::default(),
+            attacks: vec![],
+            max_hp: 150,
+        }
     }
 }

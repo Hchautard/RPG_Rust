@@ -41,3 +41,17 @@ impl Player {
         println!("{} passe au niveau {}!", self.caracter.name, self.level);
     }
 }
+
+impl Default for Player {
+    fn default() -> Self {
+        Self {
+            caracter: Caracter::new("Player", "default_style", 100, 50, 0),
+            badge: Badge::default(),         
+            inventory: vec![],
+            level: 1,
+            reputation: 0,
+            aptitudes: vec![],
+            max_hp: 100,
+        }
+    }
+}

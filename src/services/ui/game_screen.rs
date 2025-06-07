@@ -5,7 +5,11 @@ use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON, BLACK};
 #[derive(Component)]
 pub struct GameScreen;
 
-pub fn setup_game(mut commands: Commands) {
+pub fn setup_game(mut commands: Commands, query: Query<Entity, With<GameScreen>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
     commands.spawn((
         Node {
                 width: Val::Percent(100.0),

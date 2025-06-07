@@ -19,21 +19,28 @@ pub struct CombatScreenPlugin;
 impl Plugin for CombatScreenPlugin {
     fn build(&self, app: &mut App) {
         app
+        .insert_resource(CombatState::default())
             .add_systems(OnEnter(AppState::Fight), setup_combat_screen)
             .add_systems(OnExit(AppState::Fight), cleanup_combat_screen)
             .add_systems(Update, combat_system);
     }
 }
 
-
 /// Setup de l'écran combat
 fn setup_combat_screen(
     mut commands: Commands,
     combat: Res<CombatState>,
     asset_server: Res<AssetServer>,
+    query: Query<Entity, With<CombatScreen>>,
 ) {
+    // Supprimer l'écran de niveaux
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
     let master_image: Handle<Image> = asset_server.load("images/OIP.png");
 
+    // Créer l'écran de combat
     commands.spawn((
         Node {
             width: Val::Percent(100.0),
@@ -72,16 +79,17 @@ fn cleanup_combat_screen(
     mut commands: Commands,
     query: Query<Entity, With<CombatScreen>>,
 ) {
+    // Supprimer l'écran de combat lorsqu'on quitte cet écran
     for e in &query {
         commands.entity(e).despawn_recursive();
     }
 }
 
-/// Système de combat (logique uniquement)
 fn combat_system(
+    mut combat: ResMut<CombatState>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
-    /*if !combat.started || combat.finished {
+    if !combat.started || combat.finished {
         return;
     }
 
@@ -112,5 +120,5 @@ fn combat_system(
             println!("{} inflige {} au joueur", combat.master.pnj.caracter.name, damage);
             combat.turn = Turn::Player;
         }
-    }*/
+    }
 }
