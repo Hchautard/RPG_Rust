@@ -3,29 +3,31 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON};
 use crate::models::caracter::bouncer::Bouncer;
 use crate::models::arena::Arena;
-// NOTE: Il faut ajouter Clone à Arena dans arena.rs
 use crate::services::json_loader::JsonLoader;
 
 #[derive(Component)]
 pub struct GameScreen;
 
-// Nouveaux composants pour identifier les écrans
 #[derive(Component)]
 pub struct BouncerQuestionUI;
 
 #[derive(Component)]
 pub struct ArenaUI;
-
-// Ressource pour stocker l'état du jeu
 #[derive(Resource, Default)]
 pub struct GameScreenState {
     pub current_screen: GameScreenType,
     pub current_question: String,
     pub answer_options: Vec<String>,
     pub correct_answer: String,
-    pub available_arenas: Vec<(String, String)>, // (nom, thème)
+    pub available_arenas: Vec<(String, String)>,
     pub selected_arena: Option<String>,
-    pub wrong_answer_message: bool, // Pour afficher le message d'erreur
+    pub wrong_answer_message: bool, 
+    pub master_name: Option<String>,
+    pub master_style: Option<String>,
+    pub master_attacks: Vec<String>,
+    pub master_dialogs: Vec<String>,
+    pub master_badge: Option<String>,
+    pub selected_arena_index: Option<usize>,
 }
 
 #[derive(Default, PartialEq)]
@@ -33,11 +35,11 @@ pub enum GameScreenType {
     #[default]
     Main,
     ArenaSelection,
+    ArenaPresentation, 
     BouncerQuestion,
     Arena,
 }
 
-// Nouvelles actions pour le jeu
 #[derive(Component, Clone)]
 pub enum GameButtonAction {
     SelectArena,
@@ -151,7 +153,6 @@ fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreen
         GameScreen,
     ))
     .with_children(|parent| {
-        // Titre
         parent.spawn(Text::new("Choisissez votre Arene"));
         
         // Message d'erreur si mauvaise réponse au bouncer
@@ -298,50 +299,6 @@ fn spawn_bouncer_question_screen(commands: &mut Commands, game_state: &GameScree
     });
 }
 
-fn spawn_arena_screen(commands: &mut Commands, game_state: &GameScreenState) {
-    commands.spawn((
-        Node {
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            display: Display::Flex,
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            flex_direction: FlexDirection::Column,
-            ..Default::default()
-        },
-        BackgroundColor(Color::srgb(0.2, 0.2, 0.2)),
-        GameScreen,
-        ArenaUI,
-    ))
-    .with_children(|parent| {
-        // Affichage du nom de l'arène
-        if let Some(selected_arena) = &game_state.selected_arena {
-            parent.spawn(Text::new(format!("ARENE: {}", selected_arena)));
-        } else {
-            parent.spawn(Text::new("ARENE"));
-        }
-        
-        // Bouton retour
-        parent
-            .spawn((
-                Button,
-                Node {
-                    width: Val::Px(200.0),
-                    height: Val::Px(50.0),
-                    margin: UiRect::all(Val::Px(10.0)),
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    ..Default::default()
-                },
-                ButtonAction::Back,
-                BorderColor(Color::BLACK),
-                BorderRadius::MAX,
-                BackgroundColor(NORMAL_BUTTON),
-            ))
-            .with_child(Text::new("Retour"));
-    });
-}
-
 // Système pour gérer les actions du jeu
 pub fn handle_game_button_actions(
     mut interaction_query: Query<(
@@ -371,19 +328,19 @@ pub fn handle_game_button_actions(
                         spawn_arena_selection_screen(&mut commands, &game_state);
                     }
                     GameButtonAction::ChooseArena(arena_index) => {
-                        // Réinitialiser le message d'erreur
                         game_state.wrong_answer_message = false;
-                        
+
                         // Sauvegarder l'arène sélectionnée
                         if let Some((arena_name, _)) = game_state.available_arenas.get(*arena_index) {
                             game_state.selected_arena = Some(arena_name.clone());
+                            game_state.selected_arena_index = Some(*arena_index); // <= AJOUT
                         }
-                        
+
                         // Nettoyer l'écran actuel
                         for entity in game_entities.iter() {
                             commands.entity(entity).despawn_recursive();
                         }
-                        
+
                         // Aller à la question du bouncer
                         game_state.current_screen = GameScreenType::BouncerQuestion;
                         spawn_bouncer_question_screen(&mut commands, &game_state);
@@ -406,11 +363,63 @@ pub fn handle_game_button_actions(
                             commands.entity(entity).despawn_recursive();
                         }
                         
-                        if *selected_answer == game_state.correct_answer {
-                            // Bonne réponse -> Arène
-                            game_state.current_screen = GameScreenType::Arena;
-                            spawn_arena_screen(&mut commands, &game_state);
-                        } else {
+                     if *selected_answer == game_state.correct_answer {
+                        game_state.current_screen = GameScreenType::ArenaPresentation;
+
+                        info!("Bonne réponse : on passe à l'écran de présentation d'arène.");
+
+                        // Charger les masters depuis le JSON
+                        match JsonLoader::loadJsonMasters("assets/caracters/pnj/masters.json") {
+                            Ok(masters) => {
+                                info!("Masters chargés avec succès : {} masters trouvés.", masters.len());
+
+                                if let Some(selected_index) = game_state.selected_arena_index {
+                                    info!("Index de l'arène sélectionnée : {}", selected_index);
+
+                                    if let Some(master) = masters.get(selected_index) {
+                                        info!("Master trouvé pour l'arène {} : {}", selected_index, master.pnj.caracter.name);
+
+                                        // Remplir les infos du master avec les vraies données
+                                        game_state.master_name = Some(master.pnj.caracter.name.clone());
+                                        game_state.master_style = Some(master.pnj.caracter.style.clone());
+                                        game_state.master_badge = Some(master.badge.name.clone());
+                                        game_state.master_attacks = master.attacks.clone();
+                                        game_state.master_dialogs = master.pnj.dialogs.clone();
+                                    } else {
+                                        info!("Aucun master trouvé pour l'index {} ! Utilisation d'un master fictif.", selected_index);
+
+                                        game_state.master_name = Some("Master Inconnu".to_string());
+                                        game_state.master_style = Some("Style Mystère".to_string());
+                                        game_state.master_badge = Some("Badge Inconnu".to_string());
+                                        game_state.master_attacks = vec!["?".to_string()];
+                                        game_state.master_dialogs = vec!["...".to_string()];
+                                    }
+                                } else {
+                                    info!("Aucun index d'arène sélectionné ! Utilisation d'un master fictif par défaut.");
+
+                                    game_state.master_name = Some("Master Inconnu".to_string());
+                                    game_state.master_style = Some("Style Mystère".to_string());
+                                    game_state.master_badge = Some("Badge Inconnu".to_string());
+                                    game_state.master_attacks = vec!["?".to_string()];
+                                    game_state.master_dialogs = vec!["...".to_string()];
+                                }
+                            }
+                            Err(e) => {
+                                info!("Erreur lors du chargement des masters : {:?}.", e);
+
+                                game_state.master_name = Some("Master Erreur".to_string());
+                                game_state.master_style = Some("Erreur de Chargement".to_string());
+                                game_state.master_badge = Some("Badge Manquant".to_string());
+                                game_state.master_attacks = vec!["Erreur".to_string()];
+                                game_state.master_dialogs = vec!["Impossible de charger le master".to_string()];
+                            }
+                        }
+
+                        // Ensuite on spawne l'écran de présentation
+                        spawn_arena_presentation_screen(&mut commands, &game_state);
+                    }
+
+                    else {
                             // Mauvaise réponse -> Retour à la sélection d'arène avec message d'erreur
                             game_state.wrong_answer_message = true;
                             game_state.current_screen = GameScreenType::ArenaSelection;
@@ -462,3 +471,69 @@ pub fn despawn_game(mut commands: Commands, query: Query<Entity, With<GameScreen
         commands.entity(entity).despawn_recursive();
     }
 }
+
+#[derive(Component)]
+pub struct ArenaPresentationUI;
+fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &GameScreenState) {
+    commands.spawn((
+        Node {
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
+            display: Display::Flex,
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
+            ..Default::default()
+        },
+        BackgroundColor(Color::srgb(0.15, 0.15, 0.25)),
+        GameScreen,
+        ArenaPresentationUI,
+    ))
+    .with_children(|parent| {
+        // Titre : Nom de l'Arène
+        if let Some(selected_arena) = &game_state.selected_arena {
+            parent.spawn(Text::new(format!("Présentation de l'Arène: {}", selected_arena)));
+        } else {
+            parent.spawn(Text::new("Présentation de l'Arène"));
+        }
+
+        // Maître de l'arène
+        if let Some(master_name) = &game_state.master_name {
+            parent.spawn(Text::new(format!("Maître de l'Arène: {}", master_name)));
+            parent.spawn(Text::new(game_state.master_dialogs.join("\n")));
+    
+        }
+        if let Some(master_style) = &game_state.master_style {
+            parent.spawn(Text::new(format!("Style: {}", master_style)));
+        }
+
+        if let Some(master_badge) = &game_state.master_badge {
+            parent.spawn(Text::new(format!("Badge: {}", master_badge)));
+        }
+
+        parent.spawn(Text::new("Attaques:"));
+        for attack in &game_state.master_attacks {
+            parent.spawn(Text::new(format!("- {}", attack)));
+        }
+
+        // Bouton pour continuer vers l'Arène
+        parent
+            .spawn((
+                Button,
+                Node {
+                    width: Val::Px(200.0),
+                    height: Val::Px(50.0),
+                    margin: UiRect::all(Val::Px(10.0)),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    ..Default::default()
+                },
+                GameButtonAction::EncounterBouncer,
+                BorderColor(Color::BLACK),
+                BorderRadius::MAX,
+                BackgroundColor(NORMAL_BUTTON),
+            ))
+            .with_child(Text::new("Continuer"));
+    });
+}
+

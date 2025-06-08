@@ -461,12 +461,10 @@ pub fn handle_creation_confirmation(
                         },
                         Err(e) => {
                             println!("Erreur lors de la sauvegarde du joueur: {}", e);
-                            // Vous pourriez vouloir informer l'utilisateur de l'erreur ici
                         }
                     }
                 } else {
                     println!("Veuillez compléter toutes les informations avant de créer le personnage.");
-                    // Vous pourriez vouloir afficher un message à l'utilisateur ici
                 }
             }
         }
@@ -475,8 +473,6 @@ pub fn handle_creation_confirmation(
 
 // Fonction utilitaire pour créer un nouveau joueur à partir des données de création
 pub fn create_player(creation_data: &PlayerCreationData) -> Player {
-    // Cette fonction serait appelée au moment de la confirmation
-    // Pour l'exemple, crée un joueur avec des données factices
     let badge = Badge {
         name: format!("Badge {}", creation_data.selected_badge_index.unwrap_or(0) + 1),
         features: vec!["Feature 1".to_string(), "Feature 2".to_string()],
@@ -497,7 +493,7 @@ pub fn create_player(creation_data: &PlayerCreationData) -> Player {
         &creation_data.name,
         &creation_data.style,
         badge,
-        Vec::<Ingredient>::new(), // Inventaire vide pour commencer
+        Vec::<Ingredient>::new(),
         aptitudes,
     )
 }

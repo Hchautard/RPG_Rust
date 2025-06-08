@@ -115,7 +115,6 @@ pub fn setup_start_screen(
             BorderColor(WHITE),
         ))
         .with_children(|text_area| {
-            // Utilisation de Text directement, comme dans les autres fichiers
             text_area.spawn(Text::new(start_text.content.clone()));
         });
 

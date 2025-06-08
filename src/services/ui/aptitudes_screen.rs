@@ -26,14 +26,12 @@ pub fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<Aptitud
         AptitudesScreen,
     ))
     .with_children(|parent| {
-        // Display aptitude list
         for aptitude in &aptitude_list.aptitudes {
             parent.spawn(Text::from(
                 aptitude.name.clone(),
             ));
         }
 
-        // Back button
         parent
             .spawn((
                 Button,

@@ -23,9 +23,9 @@ impl Plugin for DisplayerBevy {
     fn build(&self, app: &mut App) {
         app.init_state::<AppState>()
             .init_resource::<GameLoadContext>()
-            .init_resource::<GameScreenState>()  // Ajout de cette ligne
+            .init_resource::<GameScreenState>()  
             .add_systems(Startup, setup)
-            .add_systems(Update, (button_system, handle_game_button_actions))  // Ajout du nouveau système
+            .add_systems(Update, (button_system, handle_game_button_actions))
 
             // Menu principal
             .add_systems(OnEnter(AppState::MainMenu), setup_main_menu)
@@ -62,7 +62,7 @@ impl DisplayerBevy {
             .init_resource::<SelectedPlayerSlot>()
             .init_resource::<PlayerCreationData>()
             .init_resource::<GameLoadContext>()
-            .init_resource::<GameScreenState>()  // Ajout de cette ligne
+            .init_resource::<GameScreenState>()
             .add_plugins(DisplayerBevy::new())
             .run();
 

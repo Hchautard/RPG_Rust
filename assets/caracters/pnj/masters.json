@@ -1,32 +1,169 @@
 [
-    {
-      "pnj": {
-        "caracter": {
-          "name": "Son Goku",
-          "style": "Saiyajin",
-          "hp": 150,
-          "pp": 80,
-          "bankroll": 5000
+  {
+    "pnj": {
+      "caracter": {
+        "name": "Pastis Man",
+        "style": "Marseille",
+        "hp": 120,
+        "pp": 60,
+        "bankroll": 2000
+      },
+      "job": "Barman du Sud",
+      "dialogs": [
+        "Ici c'est Marseille bébé !",
+        "T'es sûr de vouloir goûter mon Pastis ?"
+      ]
+    },
+    "badge": {
+      "name": "Pastis Badge",
+      "features": [
+        "Maîtrise du Pastis parfait",
+        "Honneur de Marseille"
+      ]
+    },
+    "attacks": [
+      "Lancer de Verre",
+      "Jet d'Anis",
+      "Étourdissement Citron",
+      "Souffle du Midi"
+    ],
+    "recipe": {
+      "ingredients": [
+        {
+          "name": "Pastis",
+          "description": "Anisé fort en goût",
+          "price": 10,
+          "type_ing": "Alcool"
         },
-        "job": "Champion",
-        "dialogs": [
-          "Tu oses défier un maître ?",
-          "Prépare-toi à goûter la puissance des Saiyajin !"
-        ]
-      },
-      "badge": {
-        "name": "Draco Badge",
-        "features": [
-          "Victoire sur le maître des dragons",
-          "Preuve de puissance ultime"
-        ]
-      },
-      "attacks": [
-        "Dragon Claw",
-        "Hyper Beam",
-        "Roar",
-        "Fly"
+        {
+          "name": "Eau Fraîche",
+          "description": "Bien fraîche",
+          "price": 0,
+          "type_ing": "Soft"
+        }
+      ],
+      "instructions": [
+        "Verser 2cl de Pastis dans un verre.",
+        "Ajouter 5cl d'eau fraîche.",
+        "Remuer délicatement.",
+        "Servir avec des glaçons."
       ]
     }
-  ]
-  
+  },
+  {
+    "pnj": {
+      "caracter": {
+        "name": "Bordeaux Baron",
+        "style": "Sud-Ouest",
+        "hp": 160,
+        "pp": 90,
+        "bankroll": 3000
+      },
+      "job": "Barman de Bordeaux",
+      "dialogs": [
+        "Le vin, c'est la vie.",
+        "Ose un Bordeaux Spritz ?"
+      ]
+    },
+    "badge": {
+      "name": "Bordeaux Badge",
+      "features": [
+        "Maîtrise du Bordeaux Spritz",
+        "Gloire de Bordeaux"
+      ]
+    },
+    "attacks": [
+      "Jet de Bordeaux",
+      "Pulvérisation d'Agrumes",
+      "Tanin Écrasant",
+      "Éclat de Raisin"
+    ],
+    "recipe": {
+      "ingredients": [
+        {
+          "name": "Vin rouge de Bordeaux",
+          "description": "Vin rouge corsé",
+          "price": 15,
+          "type_ing": "Alcool"
+        },
+        {
+          "name": "Eau gazeuse",
+          "description": "Bulles légères",
+          "price": 1,
+          "type_ing": "Soft"
+        },
+        {
+          "name": "Orange",
+          "description": "Rondeur fruitée",
+          "price": 3,
+          "type_ing": "Fruit"
+        }
+      ],
+      "instructions": [
+        "Verser 8cl de vin rouge dans un verre.",
+        "Ajouter 4cl d'eau gazeuse.",
+        "Ajouter quelques rondelles d'orange.",
+        "Remuer légèrement.",
+        "Servir avec des glaçons."
+      ]
+    }
+  },
+  {
+    "pnj": {
+      "caracter": {
+        "name": "Cidre Lord",
+        "style": "Normandie",
+        "hp": 140,
+        "pp": 70,
+        "bankroll": 2500
+      },
+      "job": "Barman du Nord-Ouest",
+      "dialogs": [
+        "Le cidre, c'est tout un art.",
+        "Prépare-toi à goûter à la pomme !"
+      ]
+    },
+    "badge": {
+      "name": "Cidre Badge",
+      "features": [
+        "Maîtrise du cocktail au cidre",
+        "Fierté de Normandie"
+      ]
+    },
+    "attacks": [
+      "Éclaboussure de Cidre",
+      "Tourbillon Pomme",
+      "Jet de Sucre Roux",
+      "Brume Normande"
+    ],
+    "recipe": {
+      "ingredients": [
+        {
+          "name": "Cidre brut",
+          "description": "Cidre artisanal de Normandie",
+          "price": 8,
+          "type_ing": "Alcool"
+        },
+        {
+          "name": "Calvados",
+          "description": "Eau-de-vie de pomme",
+          "price": 12,
+          "type_ing": "Alcool fort"
+        },
+        {
+          "name": "Sucre roux",
+          "description": "Pour adoucir le mélange",
+          "price": 2,
+          "type_ing": "Sucre"
+        }
+      ],
+      "instructions": [
+        "Verser 4cl de Calvados dans un verre.",
+        "Ajouter 10cl de Cidre brut.",
+        "Ajouter une cuillère à café de sucre roux.",
+        "Remuer délicatement.",
+        "Servir frais."
+      ]
+    }
+  }
+]

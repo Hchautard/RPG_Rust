@@ -18,6 +18,6 @@ impl Client {
     }
 
     pub fn giveReputation(&self) -> i32 {
-        self.tips * 10  // TODO
+        self.tips * 10
     }
 }

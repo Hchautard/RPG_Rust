@@ -18,7 +18,7 @@ pub struct SelectedPlayerSlot {
 /// Structure pour stocker les informations des slots
 #[derive(Resource)]
 pub struct SlotInfo {
-    pub info: Vec<Option<String>>, // None si vide, Some(nom) si occupé
+    pub info: Vec<Option<String>>,
 }
 
 impl Default for SlotInfo {
@@ -102,7 +102,6 @@ pub fn setup_player_slot_screen(
     slot_info: Res<SlotInfo>,
     game_context: Res<GameLoadContext>
 ) {
-    // Ajuster le titre et le texte du bouton en fonction du contexte
     let screen_title = if game_context.is_load_game {
         "Choisissez une sauvegarde à charger"
     } else {
@@ -129,7 +128,6 @@ pub fn setup_player_slot_screen(
         PlayerSlotScreen,
     ))
     .with_children(|parent| {
-        // Titre de l'écran adapté au contexte
         parent.spawn(Text::new(screen_title));
 
         // Container pour les slots

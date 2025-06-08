@@ -1,7 +1,3 @@
-// ================================
-// constants.rs - Version mise à jour
-// ================================
-
 use bevy::prelude::*;
 
 // Constantes de couleurs partagées
