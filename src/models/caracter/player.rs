@@ -23,19 +23,4 @@ impl Player {
             aptitudes,
         }
     }
-
-    pub fn gain_xp(&mut self, xp: u32) {
-        self.reputation += xp;
-        println!("{} gagne {} XP!", self.caracter.name, xp);
-
-        if self.reputation >= 100 {
-            self.level_up();
-        }
-    }
-
-    fn level_up(&mut self) {
-        self.level += 1;
-        self.reputation = 0;
-        println!("{} passe au niveau {}!", self.caracter.name, self.level);
-    }
 }

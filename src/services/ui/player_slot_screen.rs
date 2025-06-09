@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use crate::services::ui::constants::{AppState, ButtonAction, GameLoadContext, NORMAL_BUTTON, SELECTED_BUTTON, WHITE, BLACK, BLUE};
-use crate::services::json_loader::JsonLoader;
+use crate::services::ui::constants::{AppState, ButtonAction, GameLoadContext, NORMAL_BUTTON, SELECTED_BUTTON, BLACK, BLUE};
 use std::fs::File;
 use std::path::Path;
 use serde_json::Value;
@@ -241,18 +240,5 @@ pub fn update_slot_selection(
 pub fn despawn_player_slot_screen(mut commands: Commands, query: Query<Entity, With<PlayerSlotScreen>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
-    }
-}
-
-/// Modifier le systeme de boutons dans displayer_bevy.rs pour mettre à jour le slot selectionne
-pub fn extend_button_system_for_slot(
-    interaction: &Interaction,
-    action: &ButtonAction,
-    selected_slot: &mut SelectedPlayerSlot,
-) {
-    if let Interaction::Pressed = interaction {
-        if let ButtonAction::SelectSlot(slot_index) = action {
-            selected_slot.slot = Some(*slot_index);
-        }
     }
 }

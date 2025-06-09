@@ -9,15 +9,4 @@ pub struct Pnj {
 }
 
 impl Pnj {
-    pub fn new(name: &str, style: &str, hp: i32, pp: i32, job: &str, dialogs: Vec<String>) -> Self {
-        Self {
-            caracter: Caracter::new(name, style, hp, pp, 0),
-            job: job.to_string(),
-            dialogs,
-        }
-    }
-
-    pub fn talk(&self) {
-        println!("{}: {}", self.caracter.name, self.dialogs[0]);
-    }
 }

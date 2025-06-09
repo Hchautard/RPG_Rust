@@ -203,7 +203,7 @@ fn handle_bouncer_answer(
 }
 
 fn load_master_data(game_state: &mut GameScreenState) {
-    match JsonLoader::loadJsonMasters("assets/caracters/pnj/masters.json") {
+    match JsonLoader::load_json_masters("assets/caracters/pnj/masters.json") {
         Ok(masters) => {
             if let Some(selected_index) = game_state.selected_arena_index {
                 if let Some(master) = masters.get(selected_index) {

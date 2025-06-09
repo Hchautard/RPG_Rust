@@ -10,12 +10,4 @@ pub struct Ingredient {
 }
 
 impl Ingredient {
-    pub fn new(name: &str, description: String, price: i32, type_ing : String) -> Self {
-        Self {
-            name: name.to_string(),
-            description,
-            price,
-            type_ing
-        }
-    }
 }

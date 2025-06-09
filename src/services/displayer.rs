@@ -33,8 +33,7 @@ impl Displayer {
                 let menu_items = vec![
                     "1. Nouvelle Partie",
                     "2. Charger Partie",
-                    "3. Voir les Aptitudes",
-                    "4. Quitter",
+                    "3. Quitter",
                 ];
 
                 let paragraph = Paragraph::new(menu_items.join("\n"))
@@ -55,10 +54,7 @@ impl Displayer {
                             println!("Chargement de la sauvegarde...");
                             break;
                         }
-                        KeyCode::Char('3') => {
-                            self.display_aptitudes(aptitudes)?;
-                        }
-                        KeyCode::Char('4') | KeyCode::Esc => {
+                        KeyCode::Char('3') | KeyCode::Esc => {
                             println!("Fermeture du jeu...");
                             return Ok(());
                         }

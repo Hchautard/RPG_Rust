@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::services::ui::constants::{AppState, ButtonAction, NORMAL_BUTTON, WHITE, BLACK, GREEN};
+use crate::services::ui::constants::{AppState, ButtonAction, NORMAL_BUTTON, BLACK, GREEN};
 use crate::services::ui::player_slot_screen::SelectedPlayerSlot;
 use crate::models::aptitude::Aptitude;
 use crate::models::caracter::player::Player;

@@ -13,26 +13,4 @@ pub struct Master {
 }
 
 impl Master {
-    pub fn new(
-        name: &str,
-        style: &str,
-        hp: i32,
-        pp: i32,
-        job: &str,
-        dialogs: Vec<String>,
-        badge: Badge,
-        attacks: Vec<String>,
-        recipe: Recipe,
-    ) -> Self {
-        Self {
-            pnj: Pnj::new(name, style, hp, pp, job, dialogs),
-            badge,
-            attacks,
-            recipe,
-        }
-    }
-
-    pub fn play() {
-        // TODO
-    }
 }

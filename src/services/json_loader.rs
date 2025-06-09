@@ -3,11 +3,9 @@ use std::io::Read;
 use std::io::Write;
 use serde_json;
 
-use serde_json::json;
 use crate::models::aptitude::Aptitude;
-use crate::models::badge::Badge;
-use crate::models::caracter::client::Client;
-use crate::models::caracter::trader::Trader;
+//use crate::models::badge::Badge;
+//use crate::models::caracter::trader::Trader;
 use crate::models::arena::Arena;
 use crate::models::caracter::bouncer::Bouncer;
 use crate::models::caracter::master::Master;
@@ -17,54 +15,17 @@ pub struct JsonLoader {
 }
 
 impl JsonLoader {
-    pub fn new() -> Self {
-        Self {}
-    }
 
-    pub fn load_json_badges(file_path: &str) -> Result<Vec<Badge>, Box<dyn std::error::Error>> {
-        let mut file = File::open(file_path)?;
-        let mut data = String::new();
-        file.read_to_string(&mut data)?;
+    // pub fn load_json_badges(file_path: &str) -> Result<Vec<Badge>, Box<dyn std::error::Error>> {
+    //     let mut file = File::open(file_path)?;
+    //     let mut data = String::new();
+    //     file.read_to_string(&mut data)?;
 
-        let badges: Vec<Badge> = serde_json::from_str(&data)?;
-        Ok(badges)
-    }
+    //     let badges: Vec<Badge> = serde_json::from_str(&data)?;
+    //     Ok(badges)
+    // }
 
-    pub fn load_json_players(file_path: &str) -> Result<Vec<Player>, Box<dyn std::error::Error>> {
-        let mut file = File::open(file_path)?;
-        let mut data = String::new();
-        file.read_to_string(&mut data)?;
-
-        let players_map: serde_json::Map<String, serde_json::Value> = serde_json::from_str(&data)?;
-
-        let mut players = Vec::new();
-        for (_level, value) in players_map {
-            let player: Player = serde_json::from_value(value)?;
-            players.push(player);
-        }
-
-        Ok(players)
-    }
-
-    pub fn load_player_by_level(file_path: &str, level: u32) -> Result<Option<Player>, Box<dyn std::error::Error>> {
-        let mut file = File::open(file_path)?;
-        let mut data = String::new();
-        file.read_to_string(&mut data)?;
-    
-        let players_map: serde_json::Map<String, serde_json::Value> = serde_json::from_str(&data)?;
-    
-        let level_str = level.to_string();
-        if let Some(value) = players_map.get(&level_str) {
-            let player: Player = serde_json::from_value(value.clone())?;
-            Ok(Some(player))
-        } else {
-            Ok(None)
-        }
-    }
-    
-
-
-    pub fn loadJsonMasters(file_path: &str)  -> Result<Vec<Master>, Box<dyn std::error::Error>> {
+    pub fn load_json_masters(file_path: &str)  -> Result<Vec<Master>, Box<dyn std::error::Error>> {
         let mut file = File::open(file_path)?;
         let mut data = String::new();
         file.read_to_string(&mut data)?;
@@ -73,7 +34,7 @@ impl JsonLoader {
         Ok(masters)
     }
 
-    pub fn loadJsonArena(file_path: &str) -> Result<Vec<Arena>, Box<dyn std::error::Error>>{
+    pub fn load_json_arena(file_path: &str) -> Result<Vec<Arena>, Box<dyn std::error::Error>>{
         let mut file = File::open(file_path)?;
         let mut data = String::new();
         file.read_to_string(&mut data)?;
@@ -81,7 +42,7 @@ impl JsonLoader {
         let arena: Vec<Arena> = serde_json::from_str(&data)?;
         Ok(arena)
     }
-    pub fn loadJsonBouncers(file_path: &str) -> Result<Vec<Bouncer>, Box<dyn std::error::Error>> {
+    pub fn load_json_bouncers(file_path: &str) -> Result<Vec<Bouncer>, Box<dyn std::error::Error>> {
         let mut file = File::open(file_path)?;
         let mut data = String::new();
         file.read_to_string(&mut data)?;
@@ -90,22 +51,14 @@ impl JsonLoader {
         Ok(bouncers)
     }
 
-    pub fn loadJsonClients(file_path: &str) -> Result<Vec<Client>, Box<dyn std::error::Error>> {
-        let mut file = File::open(file_path)?;
-        let mut data = String::new();
-        file.read_to_string(&mut data)?;
+    // pub fn load_json_traders(file_path: &str) -> Result<Vec<Trader>, Box<dyn std::error::Error>> {
+    //     let mut file = File::open(file_path)?;
+    //     let mut data = String::new();
+    //     file.read_to_string(&mut data)?;
 
-        let clients: Vec<Client> = serde_json::from_str(&data)?;
-        Ok(clients)
-    }
-    pub fn loadJsonTraders(file_path: &str) -> Result<Vec<Trader>, Box<dyn std::error::Error>> {
-        let mut file = File::open(file_path)?;
-        let mut data = String::new();
-        file.read_to_string(&mut data)?;
-
-        let traders: Vec<Trader> = serde_json::from_str(&data)?;
-        Ok(traders)
-    }
+    //     let traders: Vec<Trader> = serde_json::from_str(&data)?;
+    //     Ok(traders)
+    // }
 
     pub fn load_json_aptitudes(file_path: &str) -> Result<Vec<Aptitude>, Box<dyn std::error::Error>> {
         let mut file = File::open(file_path)?;
@@ -119,12 +72,10 @@ impl JsonLoader {
     pub fn save_player_to_json(file_path: &str, player: &Player) -> Result<(), Box<dyn std::error::Error>> {
         let mut players: serde_json::Map<String, serde_json::Value> = serde_json::Map::new();
     
-        // Lecture du fichier existant
         if let Ok(mut file) = File::open(file_path) {
             let mut data = String::new();
             file.read_to_string(&mut data)?;
             if !data.trim().is_empty() {
-                // Deserialisation du fichier JSON en une Map
                 players = serde_json::from_str(&data)?;
             }
         }

@@ -8,8 +8,4 @@ pub struct Recipe {
     pub instructions: Vec<String>,
 }
 
-impl Recipe {
-    pub fn new(ingredients: Vec<Ingredient>, instructions: Vec<String>) -> Self {
-        Self { ingredients, instructions }
-    }
-}
+impl Recipe {}

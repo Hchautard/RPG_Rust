@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::models::aptitude::Aptitude;
-use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON, BLACK};
+use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON};
 
 #[derive(Component)]
 pub struct AptitudesScreen;
@@ -22,7 +22,7 @@ pub fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<Aptitud
                 flex_direction: FlexDirection::Column,
                 ..Default::default()
         },
-        BackgroundColor(Color::rgb(0.2, 0.2, 0.2)),
+        BackgroundColor(Color::srgb(0.2, 0.2, 0.2)),
         AptitudesScreen,
     ))
     .with_children(|parent| {

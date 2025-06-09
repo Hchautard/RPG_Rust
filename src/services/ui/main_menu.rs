@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection};
-use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON};
+use crate::services::ui::constants::{ButtonAction};
 
 #[derive(Component)]
 pub struct MainMenu;
 
-pub fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup_main_menu(mut commands: Commands) {
     commands.spawn((
         Node {
                 height: Val::Percent(100.0),

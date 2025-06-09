@@ -7,10 +7,4 @@ pub struct Arena {
 }
 
 impl Arena {
-    pub fn new(name: &str, theme: String) -> Self {
-        Self {
-            name: name.to_string(),
-            theme
-        }
-    }
 }

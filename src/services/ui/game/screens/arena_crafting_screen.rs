@@ -3,7 +3,7 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaUI};
 use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::rng;
 
 pub fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
@@ -25,7 +25,7 @@ pub fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &G
 
         if let Some(recipe) = &game_state.master_recipe {
             let mut shuffled_instructions = recipe.instructions.clone();
-            shuffled_instructions.shuffle(&mut thread_rng());
+            shuffled_instructions.shuffle(&mut rng());
 
             parent.spawn(Text::new("Cliquez sur les étapes dans l'ordre :"));
 

@@ -8,10 +8,4 @@ pub struct Badge {
 }
 
 impl Badge {
-    pub fn new(name: &str, features: Vec<String>) -> Self {
-        Self {
-            name: name.to_string(),
-            features,
-        }
-    }
 }
