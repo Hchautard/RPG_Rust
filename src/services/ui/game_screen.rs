@@ -33,6 +33,7 @@ pub struct GameScreenState {
     pub arena_combat_state: ArenaCombatState,
     pub player_hp: i32,
     pub boss_hp: i32,
+    pub show_intro_screen: bool, 
     pub master_recipe: Option<Recipe>,
     pub current_boss_attack: Option<String>,
     pub current_crafting: CurrentCocktailCrafting,
@@ -59,6 +60,7 @@ pub enum GameButtonAction {
     StartCombat,
     SelectIngredient(String),
     ValidateCocktail,
+    StartArenaCombat,
     BackToMainFromCombat,
 
 }
@@ -322,6 +324,7 @@ pub fn handle_game_button_actions(
     mut commands: Commands,
     mut game_state: ResMut<GameScreenState>,
     game_entities: Query<Entity, With<GameScreen>>,
+    arena_ui_query: Query<Entity, With<ArenaUI>>,
 ) {
     for (interaction, action, mut background_color) in interaction_query.iter_mut() {
                     match *interaction {
@@ -371,8 +374,19 @@ pub fn handle_game_button_actions(
                     game_state.boss_hp = 100;
                     game_state.current_crafting = CurrentCocktailCrafting::default();
 
-                    spawn_arena_combat_screen(&mut commands, &game_state);
-                }
+                    game_state.show_intro_screen = true;
+                        spawn_arena_combat_screen(&mut commands, &game_state);
+
+                    }
+                    GameButtonAction::StartArenaCombat => {
+                        game_state.show_intro_screen = false;
+
+                         for entity in arena_ui_query.iter() {
+                            commands.entity(entity).despawn_recursive();
+                        }
+
+                        spawn_arena_combat_screen(&mut commands, &game_state);
+                    }
                     GameButtonAction::SelectIngredient(ingredient) => {
                     // Ajouter l'ingrédient sélectionné (éviter les doublons si nécessaire)
                     if !game_state.current_crafting.selected_ingredients.contains(ingredient) {
@@ -660,6 +674,37 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
         ArenaUI,
     ))
     .with_children(|parent| {
+
+            if game_state.show_intro_screen {
+        // Écran d'introduction avec dialog + bouton valider
+        parent.spawn(Text::new(format!(
+            "Vous allez affronter {} sur {}",
+            game_state.master_name.as_deref().unwrap_or("???"),
+            game_state.selected_arena.as_deref().unwrap_or("???"),
+        )));
+
+        parent
+            .spawn((
+                Button,
+                Node {
+                    width: Val::Px(200.0),
+                    height: Val::Px(50.0),
+                    margin: UiRect::all(Val::Px(10.0)),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    ..Default::default()
+                },
+                GameButtonAction::StartArenaCombat, // Nouvelle action que tu traiteras dans ton système
+                BorderColor(Color::BLACK),
+                BorderRadius::MAX,
+                BackgroundColor(NORMAL_BUTTON),
+            ))
+            .with_child(Text::new("Valider"));
+        
+        // On ne met pas le reste de l'UI ici → return !
+        return;
+    }
+
         // Titre combat
         if let Some(master_name) = &game_state.master_name {
             parent.spawn(Text::new(format!("Combat contre le Maître: {}", master_name)));
@@ -744,32 +789,33 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
                 BorderRadius::MAX,
                 BackgroundColor(NORMAL_BUTTON),
             ))
-            .with_child(
+            .with_child({
                 if let Some(recipe) = &game_state.master_recipe {
-                            let selected = &game_state.current_crafting.selected_ingredients;
-                            let expected: HashSet<String> = recipe.ingredients.iter().map(|i| i.name.clone()).collect();
+                    let selected = &game_state.current_crafting.selected_ingredients;
+                    let expected: HashSet<String> = recipe.ingredients.iter().map(|i| i.name.clone()).collect();
 
-                            let correct_count = selected.iter().filter(|i| expected.contains(*i)).count();
-                            let incorrect_count = selected.len() - correct_count;
+                    let correct_count = selected.iter().filter(|i| expected.contains(*i)).count();
+                    let incorrect_count = selected.len() - correct_count;
 
-                            let is_valid = selected.len() == expected.len() && incorrect_count == 0;
+                    let is_valid = selected.len() == expected.len() && incorrect_count == 0;
 
-                            if is_valid {
-                               Text::new("✅ Cocktail valide !");
-                            } else {
-                                Text::new(format!(
-                                    "❌ Cocktail incorrect : {} bon(s), {} mauvais.",
-                                    correct_count, incorrect_count
-                                ));
-                            }
-
-                            // Optionnel : log en console aussi
-                            println!(
-                                "Validation cocktail — bons: {}, mauvais: {}, sélection: {:?}, attendu: {:?}",
-                                correct_count, incorrect_count, selected, expected
-                            );
-                    }
+                    println!(
+                        "Validation cocktail — bons: {}, mauvais: {}, sélection: {:?}, attendu: {:?}",
+                        correct_count, incorrect_count, selected, expected
                     );
+
+                    if is_valid {
+                        Text::new("✅ Cocktail valide !")
+                    } else {
+                        Text::new(format!(
+                            "❌ Cocktail incorrect : {} bon(s), {} mauvais.",
+                            correct_count, incorrect_count
+                        ))
+                    }
+                } else {
+                    Text::new("Aucune recette de maître disponible.")
+                }
+            });
 
         // Bouton retour (au cas où)
         parent
