@@ -70,9 +70,18 @@ impl DisplayerBevy {
     }
 }
 
-fn setup(mut commands: Commands) {
+#[derive(Resource, Clone)]
+pub struct UIFont(pub Handle<Font>);
+
+
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d::default());
+    let font_handle = asset_server.load("fonts/NotoSans-Regular.ttf");
+
+    commands.insert_resource(UIFont(font_handle));
 }
+
+
 
 fn button_system(
     mut interaction_query: Query<(
