@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-// Constantes de couleurs partagées
+// Constantes de couleurs partagees
 pub const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 pub const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
 pub const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
@@ -11,7 +11,7 @@ pub const BLUE: Color = Color::srgb(0.0, 0.0, 1.0);
 pub const WHITE: Color = Color::srgb(1.0, 1.0, 1.0);
 pub const BLACK: Color = Color::srgb(0.0, 0.0, 0.0);
 
-// États principaux de l'application
+// Etats principaux de l'application
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
     #[default]
@@ -23,7 +23,7 @@ pub enum AppState {
     StartScreen,
 }
 
-// États du jeu (sous-états de AppState::Game)
+// Etats du jeu (sous-etats de AppState::Game)
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum GameState {
     #[default]
@@ -46,7 +46,7 @@ pub enum ButtonAction {
     StartGame,
 }
 
-// Actions spécifiques au jeu
+// Actions specifiques au jeu
 #[derive(Component, Clone)]
 pub enum GameAction {
     EncounterBouncer,
@@ -73,7 +73,7 @@ pub struct BouncerChallenge {
 impl Default for BouncerChallenge {
     fn default() -> Self {
         Self {
-            bouncer_name: "Bouncer Mystérieux".to_string(),
+            bouncer_name: "Bouncer Mysterieux".to_string(),
             question: "Qui marche sur quatre pattes le matin, deux pattes le midi, et trois pattes le soir ?".to_string(),
             correct_answer: "L'homme".to_string(),
             options: vec![

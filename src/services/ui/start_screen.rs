@@ -5,11 +5,11 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-/// Composant pour marquer les entités de l'écran de démarrage
+/// Composant pour marquer les entites de l'ecran de demarrage
 #[derive(Component)]
 pub struct StartScreen;
 
-/// Ressource pour stocker le texte chargé
+/// Ressource pour stocker le texte charge
 #[derive(Resource)]
 pub struct StartScreenText {
     pub content: String,
@@ -23,7 +23,7 @@ impl Default for StartScreenText {
     }
 }
 
-/// Plugin pour l'écran de démarrage
+/// Plugin pour l'ecran de demarrage
 pub struct StartScreenPlugin;
 
 impl Plugin for StartScreenPlugin {
@@ -36,7 +36,7 @@ impl Plugin for StartScreenPlugin {
     }
 }
 
-/// Système pour charger le contenu de la sauvegarde
+/// Systeme pour charger le contenu de la sauvegarde
 pub fn load_save_content(
     mut start_text: ResMut<StartScreenText>,
     selected_slot: Res<SelectedPlayerSlot>,
@@ -49,7 +49,7 @@ pub fn load_save_content(
                 Ok(mut file) => {
                     let mut content = String::new();
                     if file.read_to_string(&mut content).is_ok() {
-                        // Essayer de formater en JSON pour une meilleure lisibilité
+                        // Essayer de formater en JSON pour une meilleure lisibilite
                         match serde_json::from_str::<serde_json::Value>(&content) {
                             Ok(json) => {
                                 start_text.content = serde_json::to_string_pretty(&json).unwrap_or(content);
@@ -71,11 +71,11 @@ pub fn load_save_content(
             start_text.content = "Le fichier de sauvegarde n'existe pas.".to_string();
         }
     } else {
-        start_text.content = "Aucun slot sélectionné.".to_string();
+        start_text.content = "Aucun slot selectionne.".to_string();
     }
 }
 
-/// Système pour initialiser l'écran de démarrage
+/// Systeme pour initialiser l'ecran de demarrage
 pub fn setup_start_screen(
     mut commands: Commands,
     start_text: Res<StartScreenText>,
@@ -97,7 +97,7 @@ pub fn setup_start_screen(
         // Titre
         parent.spawn(Text::new("Contenu de la sauvegarde"));
 
-        // Zone de texte avec défilement
+        // Zone de texte avec defilement
         parent.spawn((
             Node {
                 width: Val::Percent(80.0),
@@ -118,7 +118,7 @@ pub fn setup_start_screen(
             text_area.spawn(Text::new(start_text.content.clone()));
         });
 
-        // Bouton pour démarrer le jeu
+        // Bouton pour demarrer le jeu
         parent
             .spawn((
                 Button,
@@ -162,7 +162,7 @@ pub fn setup_start_screen(
     });
 }
 
-/// Système pour supprimer l'écran de démarrage
+/// Systeme pour supprimer l'ecran de demarrage
 pub fn despawn_start_screen(
     mut commands: Commands,
     query: Query<Entity, With<StartScreen>>,

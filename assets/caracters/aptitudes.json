@@ -1,19 +1,19 @@
 [
     {
-      "name": "Mixologie Avancée",
-      "description": "Capacité à créer des cocktails avec des effets améliorés.",
+      "name": "Mixologie Avancee",
+      "description": "Capacite à creer des cocktails avec des effets ameliores.",
       "pp": 10,
       "power": 1.5
     },
     {
       "name": "Flair Bartending",
-      "description": "Réaliser des figures spectaculaires en manipulant les bouteilles.",
+      "description": "Realiser des figures spectaculaires en manipulant les bouteilles.",
       "pp": 8,
       "power": 1.2
     },
     {
-      "name": "Dégustation Experte",
-      "description": "Capacité à identifier des ingrédients cachés dans une boisson.",
+      "name": "Degustation Experte",
+      "description": "Capacite à identifier des ingredients caches dans une boisson.",
       "pp": 5,
       "power": 2.0
     }

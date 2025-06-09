@@ -8,11 +8,11 @@ use crate::models::ingredient::Ingredient;
 use bevy::ecs::system::ParamSet;
 use crate::services::json_loader::JsonLoader;
 
-/// Composant pour marquer les entités de l'écran de création de personnage
+/// Composant pour marquer les entites de l'ecran de creation de personnage
 #[derive(Component)]
 pub struct PlayerCreationScreen;
 
-/// Ressource pour stocker les données temporaires de création de personnage
+/// Ressource pour stocker les donnees temporaires de creation de personnage
 #[derive(Resource)]
 pub struct PlayerCreationData {
     pub name: String,
@@ -47,7 +47,7 @@ pub struct BadgeChoice(pub usize);
 #[derive(Component)]
 pub struct AptitudeChoice(pub usize);
 
-/// Systèmes de création de personnage
+/// Systemes de creation de personnage
 pub struct PlayerCreationPlugin;
 
 impl Plugin for PlayerCreationPlugin {
@@ -67,7 +67,7 @@ pub fn setup_player_creation_screen(
     selected_slot: Res<SelectedPlayerSlot>,
     mut creation_data: ResMut<PlayerCreationData>,
 ) {
-    // Réinitialiser les données de création
+    // Reinitialiser les donnees de creation
     *creation_data = PlayerCreationData::default();
 
     commands
@@ -132,7 +132,7 @@ pub fn setup_player_creation_screen(
                         });
                     });
 
-                    // Sélection de badge
+                    // Selection de badge
                     form.spawn(Node {
                         display: Display::Flex,
                         flex_direction: FlexDirection::Column,
@@ -174,7 +174,7 @@ pub fn setup_player_creation_screen(
                         });
                     });
 
-                    // Sélection d'aptitudes
+                    // Selection d'aptitudes
                     form.spawn(Node {
                         display: Display::Flex,
                         flex_direction: FlexDirection::Column,
@@ -279,7 +279,7 @@ pub fn despawn_player_creation_screen(
     }
 }
 
-// Système de gestion des saisies texte (simplifié avec noms aléatoires)
+// Systeme de gestion des saisies texte (simplifie avec noms aleatoires)
 pub fn handle_text_input(
     mut interaction_query: Query<(&Interaction, &TextInput, &Children), (Changed<Interaction>, With<Button>)>,
     mut text_query: Query<&mut Text>,
@@ -287,10 +287,10 @@ pub fn handle_text_input(
 ) {
     for (interaction, input_type, children) in interaction_query.iter_mut() {
         if let Interaction::Pressed = *interaction {
-            // Utiliser un nom aléatoire au lieu d'une saisie réelle
-            match *input_type {  // Déréférencer input_type ici
+            // Utiliser un nom aleatoire au lieu d'une saisie reelle
+            match *input_type {  // Dereferencer input_type ici
                 TextInput::Name => {
-                    // Liste de noms de héros aléatoires
+                    // Liste de noms de heros aleatoires
                     let hero_names = [
                         "Aragorn", "Legolas", "Gandalf", "Frodo", "Gimli",
                         "Thorin", "Elendil", "Boromir", "Faramir", "Eomer",
@@ -298,7 +298,7 @@ pub fn handle_text_input(
                         "Galadriel", "Arwen", "Eowyn", "Luthien", "Tauriel"
                     ];
                     
-                    // Choisir un nom aléatoire
+                    // Choisir un nom aleatoire
                     let random_index = (std::time::SystemTime::now()
                         .duration_since(std::time::UNIX_EPOCH)
                         .unwrap_or_default()
@@ -311,13 +311,13 @@ pub fn handle_text_input(
                     }
                 },
                 TextInput::Style => {
-                    // Styles de combat aléatoires
+                    // Styles de combat aleatoires
                     let combat_styles = [
-                        "Offensif", "Défensif", "Équilibré", "Furtif", "Agressif",
-                        "Stratégique", "Acrobatique", "Magique", "Technique", "Berserker"
+                        "Offensif", "Defensif", "Equilibre", "Furtif", "Agressif",
+                        "Strategique", "Acrobatique", "Magique", "Technique", "Berserker"
                     ];
                     
-                    // Choisir un style aléatoire
+                    // Choisir un style aleatoire
                     let random_index = (std::time::SystemTime::now()
                         .duration_since(std::time::UNIX_EPOCH)
                         .unwrap_or_default()
@@ -334,7 +334,7 @@ pub fn handle_text_input(
     }
 }
 
-// Système de gestion de la sélection de badge
+// Systeme de gestion de la selection de badge
 pub fn handle_badge_selection(
     mut params: ParamSet<(
         Query<(&Interaction, &BadgeChoice), (Changed<Interaction>, With<Button>)>,
@@ -342,7 +342,7 @@ pub fn handle_badge_selection(
     )>,
     mut creation_data: ResMut<PlayerCreationData>,
 ) {
-    // Étape 1: Trouver quel badge a été cliqué
+    // Etape 1: Trouver quel badge a ete clique
     let mut clicked_index = None;
     
     for (interaction, badge_choice) in params.p0().iter() {
@@ -352,9 +352,9 @@ pub fn handle_badge_selection(
         }
     }
     
-    // Si un badge a été cliqué
+    // Si un badge a ete clique
     if let Some(index) = clicked_index {
-        // Si on clique sur un badge déjà sélectionné, on le désélectionne
+        // Si on clique sur un badge dejà selectionne, on le deselectionne
         if creation_data.selected_badge_index == Some(index) {
             creation_data.selected_badge_index = None;
             
@@ -365,7 +365,7 @@ pub fn handle_badge_selection(
                 }
             }
         } else {
-            // Remplace la sélection actuelle par le nouveau badge
+            // Remplace la selection actuelle par le nouveau badge
             let previous_selection = creation_data.selected_badge_index;
             creation_data.selected_badge_index = Some(index);
             
@@ -374,7 +374,7 @@ pub fn handle_badge_selection(
                 if choice.0 == index {
                     *bg_color = BackgroundColor(GREEN);
                 } else if previous_selection == Some(choice.0) {
-                    // Réinitialiser le bouton précédemment sélectionné
+                    // Reinitialiser le bouton precedemment selectionne
                     *bg_color = BackgroundColor(NORMAL_BUTTON);
                 }
             }
@@ -382,7 +382,7 @@ pub fn handle_badge_selection(
     }
 }
 
-// Système de gestion de la sélection d'aptitudes
+// Systeme de gestion de la selection d'aptitudes
 pub fn handle_aptitude_selection(
     mut params: ParamSet<(
         Query<(&Interaction, &AptitudeChoice), (Changed<Interaction>, With<Button>)>,
@@ -399,9 +399,9 @@ pub fn handle_aptitude_selection(
         }
     }
     
-    // Si une aptitude a été cliquée
+    // Si une aptitude a ete cliquee
     if let Some(index) = clicked_index {
-        // Si on clique sur une aptitude déjà sélectionnée, on la désélectionne
+        // Si on clique sur une aptitude dejà selectionnee, on la deselectionne
         if creation_data.selected_aptitudes.contains(&index) {
             creation_data.selected_aptitudes.retain(|&i| i != index);
             
@@ -412,7 +412,7 @@ pub fn handle_aptitude_selection(
                 }
             }
         } else {
-            // Remplace la sélection actuelle par la nouvelle aptitude
+            // Remplace la selection actuelle par la nouvelle aptitude
             creation_data.selected_aptitudes.clear();
             creation_data.selected_aptitudes.push(index);
             
@@ -428,7 +428,7 @@ pub fn handle_aptitude_selection(
     }
 }
 
-// Système de gestion de la confirmation de création
+// Systeme de gestion de la confirmation de creation
 pub fn handle_creation_confirmation(
     interaction_query: Query<(&Interaction, &ButtonAction), (Changed<Interaction>, With<Button>)>,
     creation_data: Res<PlayerCreationData>,
@@ -441,22 +441,22 @@ pub fn handle_creation_confirmation(
     for (interaction, action) in interaction_query.iter() {
         if let Interaction::Pressed = *interaction {
             if let ButtonAction::CreatePlayer = action {
-                // Vérifier que les informations nécessaires sont renseignées
+                // Verifier que les informations necessaires sont renseignees
                 if !creation_data.name.is_empty() && 
                    creation_data.selected_badge_index.is_some() && !creation_data.selected_aptitudes.is_empty() {
                     
-                    // Créer le joueur
+                    // Creer le joueur
                     let player = create_player(&creation_data);
                     
-                    // Déterminer le chemin du fichier basé sur le slot
+                    // Determiner le chemin du fichier base sur le slot
                     let slot_index = selected_slot.slot.unwrap_or(0);
                     let file_path = format!("save/player_slot_{}.json", slot_index + 1);
                     
                     // Sauvegarder le joueur dans un fichier JSON
                     match JsonLoader::save_player_to_json(&file_path, &player) {
                         Ok(_) => {
-                            println!("Joueur sauvegardé dans {}", file_path);
-                            // Revenir à l'écran de sélection de slot ou au menu principal
+                            println!("Joueur sauvegarde dans {}", file_path);
+                            // Revenir à l'ecran de selection de slot ou au menu principal
                             next_state.set(AppState::PlayerSlot);
                         },
                         Err(e) => {
@@ -464,14 +464,14 @@ pub fn handle_creation_confirmation(
                         }
                     }
                 } else {
-                    println!("Veuillez compléter toutes les informations avant de créer le personnage.");
+                    println!("Veuillez completer toutes les informations avant de creer le personnage.");
                 }
             }
         }
     }
 }
 
-// Fonction utilitaire pour créer un nouveau joueur à partir des données de création
+// Fonction utilitaire pour creer un nouveau joueur à partir des donnees de creation
 pub fn create_player(creation_data: &PlayerCreationData) -> Player {
     let badge = Badge {
         name: format!("Badge {}", creation_data.selected_badge_index.unwrap_or(0) + 1),

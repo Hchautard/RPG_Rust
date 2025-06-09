@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use std::io;
 use crate::models::aptitude::Aptitude;
 
-// Import des constantes et états
+// Import des constantes et etats
 use crate::services::ui::constants::{
     AppState, ButtonAction, GameLoadContext,
     NORMAL_BUTTON, WHITE, RED, GREEN
@@ -31,21 +31,21 @@ impl Plugin for DisplayerBevy {
             .add_systems(OnEnter(AppState::MainMenu), setup_main_menu)
             .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)
 
-            // Écran des aptitudes
+            // Ecran des aptitudes
             .add_systems(OnEnter(AppState::Aptitudes), setup_aptitudes_screen)
             .add_systems(OnExit(AppState::Aptitudes), despawn_aptitudes_screen)
 
-            // Écran de jeu
+            // Ecran de jeu
             .add_systems(OnEnter(AppState::Game), setup_game)
             .add_systems(OnExit(AppState::Game), despawn_game)
             
             // Ajout du plugin pour les slots de joueur
             .add_plugins(PlayerSlotScreenPlugin)
             
-            // Ajout du plugin pour la création de personnage
+            // Ajout du plugin pour la creation de personnage
             .add_plugins(PlayerCreationPlugin)
             
-            // Ajout du plugin pour l'écran de démarrage (contenu de sauvegarde)
+            // Ajout du plugin pour l'ecran de demarrage (contenu de sauvegarde)
             .add_plugins(StartScreenPlugin);
     }
 }

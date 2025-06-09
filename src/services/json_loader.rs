@@ -124,7 +124,7 @@ impl JsonLoader {
             let mut data = String::new();
             file.read_to_string(&mut data)?;
             if !data.trim().is_empty() {
-                // Désérialisation du fichier JSON en une Map
+                // Deserialisation du fichier JSON en une Map
                 players = serde_json::from_str(&data)?;
             }
         }
@@ -144,7 +144,7 @@ impl JsonLoader {
     pub fn ensure_save_directory() {
         use std::fs;
         if let Err(e) = fs::create_dir_all("save") {
-            println!("Erreur lors de la création du dossier de sauvegarde: {}", e);
+            println!("Erreur lors de la creation du dossier de sauvegarde: {}", e);
         }
     }
 

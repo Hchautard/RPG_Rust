@@ -5,11 +5,11 @@ use std::fs::File;
 use std::path::Path;
 use serde_json::Value;
 
-/// Composant pour marquer les entités de l'écran de sélection de slot
+/// Composant pour marquer les entites de l'ecran de selection de slot
 #[derive(Component)]
 pub struct PlayerSlotScreen;
 
-/// Ressource pour stocker le slot de joueur sélectionné
+/// Ressource pour stocker le slot de joueur selectionne
 #[derive(Resource)]
 pub struct SelectedPlayerSlot {
     pub slot: Option<usize>,
@@ -29,7 +29,7 @@ impl Default for SlotInfo {
     }
 }
 
-/// Plugin pour l'écran de sélection de slot
+/// Plugin pour l'ecran de selection de slot
 pub struct PlayerSlotScreenPlugin;
 
 impl Plugin for PlayerSlotScreenPlugin {
@@ -53,19 +53,19 @@ impl Default for SelectedPlayerSlot {
     }
 }
 
-/// Système pour charger les informations des slots
+/// Systeme pour charger les informations des slots
 pub fn load_player_slots(mut slot_info: ResMut<SlotInfo>) {
     // S'assurer que le dossier de sauvegarde existe
     if !Path::new("save").exists() {
         if let Err(e) = std::fs::create_dir_all("save") {
-            println!("Erreur lors de la création du dossier de sauvegarde: {}", e);
+            println!("Erreur lors de la creation du dossier de sauvegarde: {}", e);
         }
     }
     
-    // Réinitialiser les informations de slot
+    // Reinitialiser les informations de slot
     slot_info.info = vec![None, None, None];
     
-    // Vérifier chaque slot
+    // Verifier chaque slot
     for i in 0..3 {
         let file_path = format!("save/player_slot_{}.json", i + 1);
         if Path::new(&file_path).exists() {
@@ -74,14 +74,14 @@ pub fn load_player_slots(mut slot_info: ResMut<SlotInfo>) {
                 Ok(file) => {
                     match serde_json::from_reader::<_, Value>(file) {
                         Ok(json) => {
-                            // Parcourir les entrées (niveaux)
+                            // Parcourir les entrees (niveaux)
                             if let Some(obj) = json.as_object() {
                                 for (_, player_data) in obj {
-                                    // Accéder à caracter.name
+                                    // Acceder à caracter.name
                                     if let Some(character) = player_data.get("caracter") {
                                         if let Some(name) = character.get("name").and_then(|n| n.as_str()) {
                                             slot_info.info[i] = Some(name.to_string());
-                                            break; // On prend le premier personnage trouvé
+                                            break; // On prend le premier personnage trouve
                                         }
                                     }
                                 }
@@ -96,7 +96,7 @@ pub fn load_player_slots(mut slot_info: ResMut<SlotInfo>) {
     }
 }
 
-/// Système pour initialiser l'écran de sélection de slot
+/// Systeme pour initialiser l'ecran de selection de slot
 pub fn setup_player_slot_screen(
     mut commands: Commands, 
     slot_info: Res<SlotInfo>,
@@ -143,7 +143,7 @@ pub fn setup_player_slot_screen(
             },
         ))
         .with_children(|slot_container| {
-            // Créer 3 slots de sauvegarde
+            // Creer 3 slots de sauvegarde
             for i in 0..3 {
                 slot_container
                     .spawn((
@@ -175,7 +175,7 @@ pub fn setup_player_slot_screen(
             }
         });
 
-        // Bouton de confirmation avec texte adapté au contexte
+        // Bouton de confirmation avec texte adapte au contexte
         parent
             .spawn((
                 Button,
@@ -219,7 +219,7 @@ pub fn setup_player_slot_screen(
     });
 }
 
-/// Système pour mettre à jour la sélection de slot
+/// Systeme pour mettre à jour la selection de slot
 pub fn update_slot_selection(
     selected_slot: Res<SelectedPlayerSlot>,
     mut slot_buttons: Query<(&ButtonAction, &mut BackgroundColor, &mut BorderColor)>,
@@ -237,14 +237,14 @@ pub fn update_slot_selection(
     }
 }
 
-/// Système pour supprimer l'écran de sélection de slot
+/// Systeme pour supprimer l'ecran de selection de slot
 pub fn despawn_player_slot_screen(mut commands: Commands, query: Query<Entity, With<PlayerSlotScreen>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }
 
-/// Modifier le système de boutons dans displayer_bevy.rs pour mettre à jour le slot sélectionné
+/// Modifier le systeme de boutons dans displayer_bevy.rs pour mettre à jour le slot selectionne
 pub fn extend_button_system_for_slot(
     interaction: &Interaction,
     action: &ButtonAction,

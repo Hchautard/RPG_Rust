@@ -10,7 +10,7 @@
       },
       "job": "Barman du Sud",
       "dialogs": [
-        "Ici c'est Marseille bébé !",
+        "Ici c'est Marseille bebe !",
         "T'es sûr de vouloir goûter mon Pastis ?"
       ]
     },
@@ -24,14 +24,14 @@
     "attacks": [
       "Lancer de Verre",
       "Jet d'Anis",
-      "Étourdissement Citron",
+      "Etourdissement Citron",
       "Souffle du Midi"
     ],
     "recipe": {
       "ingredients": [
         {
           "name": "Pastis",
-          "description": "Anisé fort en goût",
+          "description": "Anise fort en goût",
           "price": 10,
           "type_ing": "Alcool"
         },
@@ -45,7 +45,7 @@
       "instructions": [
         "Verser 2cl de Pastis dans un verre.",
         "Ajouter 5cl d'eau fraîche.",
-        "Remuer délicatement.",
+        "Remuer delicatement.",
         "Servir avec des glaçons."
       ]
     }
@@ -74,27 +74,27 @@
     },
     "attacks": [
       "Jet de Bordeaux",
-      "Pulvérisation d'Agrumes",
-      "Tanin Écrasant",
-      "Éclat de Raisin"
+      "Pulverisation d'Agrumes",
+      "Tanin Ecrasant",
+      "Eclat de Raisin"
     ],
     "recipe": {
       "ingredients": [
         {
           "name": "Vin rouge de Bordeaux",
-          "description": "Vin rouge corsé",
+          "description": "Vin rouge corse",
           "price": 15,
           "type_ing": "Alcool"
         },
         {
           "name": "Eau gazeuse",
-          "description": "Bulles légères",
+          "description": "Bulles legeres",
           "price": 1,
           "type_ing": "Soft"
         },
         {
           "name": "Orange",
-          "description": "Rondeur fruitée",
+          "description": "Rondeur fruitee",
           "price": 3,
           "type_ing": "Fruit"
         }
@@ -103,7 +103,7 @@
         "Verser 8cl de vin rouge dans un verre.",
         "Ajouter 4cl d'eau gazeuse.",
         "Ajouter quelques rondelles d'orange.",
-        "Remuer légèrement.",
+        "Remuer legerement.",
         "Servir avec des glaçons."
       ]
     }
@@ -120,18 +120,18 @@
       "job": "Barman du Nord-Ouest",
       "dialogs": [
         "Le cidre, c'est tout un art.",
-        "Prépare-toi à goûter à la pomme !"
+        "Prepare-toi à goûter à la pomme !"
       ]
     },
     "badge": {
       "name": "Cidre Badge",
       "features": [
         "Maîtrise du cocktail au cidre",
-        "Fierté de Normandie"
+        "Fierte de Normandie"
       ]
     },
     "attacks": [
-      "Éclaboussure de Cidre",
+      "Eclaboussure de Cidre",
       "Tourbillon Pomme",
       "Jet de Sucre Roux",
       "Brume Normande"
@@ -152,7 +152,7 @@
         },
         {
           "name": "Sucre roux",
-          "description": "Pour adoucir le mélange",
+          "description": "Pour adoucir le melange",
           "price": 2,
           "type_ing": "Sucre"
         }
@@ -160,8 +160,8 @@
       "instructions": [
         "Verser 4cl de Calvados dans un verre.",
         "Ajouter 10cl de Cidre brut.",
-        "Ajouter une cuillère à café de sucre roux.",
-        "Remuer délicatement.",
+        "Ajouter une cuillere à cafe de sucre roux.",
+        "Remuer delicatement.",
         "Servir frais."
       ]
     }

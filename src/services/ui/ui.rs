@@ -7,6 +7,6 @@ pub mod player_slot_screen;
 pub mod player_creation_screen;
 pub mod start_screen;
 
-// Re-export des composants et ressources fréquemment utilisés
+// Re-export des composants et ressources frequemment utilises
 pub use constants::{AppState, ButtonAction};
 pub use player_slot_screen::{SelectedPlayerSlot, PlayerSlotScreenPlugin};
