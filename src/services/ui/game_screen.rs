@@ -327,7 +327,7 @@ pub fn handle_game_button_actions(
     ), (Changed<Interaction>, With<Button>)>,
     mut commands: Commands,
     mut game_state: ResMut<GameScreenState>,
-    game_entities: Query<Entity, With<GameScreen>>,
+    gameentities: Query<Entity, With<GameScreen>>,
     arena_ui_query: Query<Entity, With<ArenaUI>>,
 ) {
     for (interaction, action, mut background_color) in interaction_query.iter_mut() {
@@ -339,7 +339,7 @@ pub fn handle_game_button_actions(
                                         game_state.wrong_answer_message = false;
                         
                                         // Nettoyer l'ecran actuel
-                                        for entity in game_entities.iter() {
+                                        for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
                         
@@ -357,7 +357,7 @@ pub fn handle_game_button_actions(
                                         }
 
                                         // Nettoyer l'ecran actuel
-                                        for entity in game_entities.iter() {
+                                        for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
 
@@ -367,7 +367,7 @@ pub fn handle_game_button_actions(
                                     }
                     GameButtonAction::EncounterBouncer => {
                     // Nettoyer l'ecran actuel
-                    for entity in game_entities.iter() {
+                    for entity in gameentities.iter() {
                         commands.entity(entity).despawn_recursive();
                     }
 
@@ -398,7 +398,7 @@ pub fn handle_game_button_actions(
                         }
 
                         // Nettoyer l'ecran actuel
-                        for entity in game_entities.iter() {
+                        for entity in gameentities.iter() {
                             commands.entity(entity).despawn_recursive();
                         }
 
@@ -420,7 +420,7 @@ pub fn handle_game_button_actions(
                             game_state.current_crafting.selected_ingredients.clear();
 
                               // Nettoyer l'ecran actuel
-                            for entity in game_entities.iter() {
+                            for entity in gameentities.iter() {
                                 commands.entity(entity).despawn_recursive();
                             }
 
@@ -440,7 +440,7 @@ pub fn handle_game_button_actions(
                     }
 
                     // Nettoyer l'ecran actuel
-                    for entity in game_entities.iter() {
+                    for entity in gameentities.iter() {
                         commands.entity(entity).despawn_recursive();
                     }
 
@@ -449,7 +449,7 @@ pub fn handle_game_button_actions(
                 }
                     GameButtonAction::BackToMainFromCombat => {
                     // Nettoyer l'ecran actuel
-                    for entity in game_entities.iter() {
+                    for entity in gameentities.iter() {
                         commands.entity(entity).despawn_recursive();
                     }
 
@@ -483,7 +483,7 @@ pub fn handle_game_button_actions(
                             for entity in arena_ui_query.iter() {
                                     commands.entity(entity).despawn_recursive();
                             }
-                            spawn_arena_end_screen(&mut commands, &game_state);
+                            spawn_arenaend_screen(&mut commands, &game_state);
                         } else {
                             println!("❌ Ordre des instructions incorrect !");
                             game_state.current_crafting.instruction_correct = false;
@@ -494,7 +494,7 @@ pub fn handle_game_button_actions(
                     GameButtonAction::AnswerQuestion(answer_index) => {
                                         let selected_answer = &game_state.answer_options[*answer_index];
                         
-                                        for entity in game_entities.iter() {
+                                        for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
                         
@@ -561,7 +561,7 @@ pub fn handle_game_button_actions(
                     GameButtonAction::BackToArenaSelection => {
                                         game_state.wrong_answer_message = false;
                         
-                                        for entity in game_entities.iter() {
+                                        for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
                         
@@ -571,7 +571,7 @@ pub fn handle_game_button_actions(
                     GameButtonAction::BackToMainGame => {
                                         game_state.wrong_answer_message = false;
                         
-                                        for entity in game_entities.iter() {
+                                        for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
                         
@@ -980,7 +980,7 @@ fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameS
     });
 }
 
-fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenState) {
+fn spawn_arenaend_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
             width: Val::Percent(100.0),

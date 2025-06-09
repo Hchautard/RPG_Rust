@@ -10,7 +10,7 @@ use crate::services::ui::constants::{
 // Import des ressources et composants depuis les sous-modules
 use crate::services::ui::aptitudes_screen::{AptitudeList, setup_aptitudes_screen, despawn_aptitudes_screen};
 use crate::services::ui::main_menu::{setup_main_menu, despawn_main_menu};
-use crate::services::ui::game_screen::{
+use crate::services::ui::game::{
     setup_game, despawn_game, handle_game_button_actions, GameScreenState
 };
 use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};

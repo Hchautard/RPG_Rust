@@ -23,11 +23,11 @@ impl Bouncer {
         }
     }
 
-    pub fn give_enigma(&self, index: usize) -> Option<&String> {
+    pub fn giveenigma(&self, index: usize) -> Option<&String> {
         self.enigmas.get(index)
     }
 
-    pub fn verify_enigma(&self, index: usize, answer: &str) -> bool {
+    pub fn verifyenigma(&self, index: usize, answer: &str) -> bool {
         match self.enigmas.get(index) {
             Some(enigma) => enigma.to_lowercase().contains(&answer.to_lowercase()),
             None => false,

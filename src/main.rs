@@ -4,7 +4,7 @@ mod services{
     pub mod displayer_bevy;
     mod Json_loader;
     pub mod game;
-    mod ui;
+    pub mod ui;
 }
 mod models{
     pub mod badge;
