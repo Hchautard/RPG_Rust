@@ -7,80 +7,169 @@ use crate::models::arena::Arena;
 use crate::services::json_loader::JsonLoader;
 use std::collections::HashSet;
 
+// Marqueur de composant pour l'écran de jeu principal
 #[derive(Component)]
 pub struct GameScreen;
 
+// Marqueur de composant pour l'interface de question du videur
 #[derive(Component)]
 pub struct BouncerQuestionUI;
-
+// Marqueur de composant pour l'interface d'arène
 #[derive(Component)]
 pub struct ArenaUI;
+// État global de l'écran de jeu contenant toutes les données de session
+
 #[derive(Resource, Default)]
 pub struct GameScreenState {
+    // Type d'écran actuellement affiché
+
     pub current_screen: GameScreenType,
+     // Question posée par le videur
+
     pub current_question: String,
+        // Options de réponse pour la question
+
     pub answer_options: Vec<String>,
+        // Réponse correcte attendue
+
     pub correct_answer: String,
+        // Liste des arènes disponibles
+
     pub available_arenas: Vec<(String, String)>,
+        // Arène actuellement sélectionnée
+
     pub selected_arena: Option<String>,
+    // Affichage du message d'erreur en cas de mauvaise répons
     pub wrong_answer_message: bool, 
+        // Nom du maître de l'arène
+
     pub master_name: Option<String>,
+        // Style de combat du maître
+
     pub master_style: Option<String>,
+        // Liste des attaques du maître
+
     pub master_attacks: Vec<String>,
+        // Dialogues du maître
+
     pub master_dialogs: Vec<String>,
+        // Badge du maître
+
     pub master_badge: Option<String>,
+        // Index de l'arène sélectionnée
+
     pub selected_arena_index: Option<usize>,
+        // État du combat d'arène
+
     pub arena_combat_state: ArenaCombatState,
+        // Points de vie du joueur
+
     pub player_hp: i32,
+        // Points de vie du boss
+
     pub boss_hp: i32,
+        // Affichage de l'écran d'introduction
+
     pub show_intro_screen: bool, 
+        // Recette du maître à reproduire
+
     pub master_recipe: Option<Recipe>,
+        // Attaque actuelle du boss
+
     pub current_boss_attack: Option<String>,
+        // État de la création de cocktail en cours
+
     pub current_crafting: CurrentCocktailCrafting,
+        // Affichage de la phase de craft
+
     pub show_crafting_phase: bool,
 }
+
+// Énumération des différents types d'écrans de jeu
 
 #[derive(Default, PartialEq)]
 pub enum GameScreenType {
     #[default]
+    // Écran principal du jeu
+
     Main,
+        // Sélection d'arène
+
     ArenaSelection,
+        // Présentation de l'arène sélectionnée
+
     ArenaPresentation, 
+        // Question du videur
+
     BouncerQuestion,
+        // Combat dans l'arène
+
     Arena,
 }
 
+// Actions spécifiques aux boutons de l'écran de jeu
+
 #[derive(Component, Clone)]
 pub enum GameButtonAction {
+        // Sélectionner une arène
+
     SelectArena,
+        // Choisir une arène spécifique par index
+
     ChooseArena(usize),
+        // Rencontrer le videur
+
     EncounterBouncer,
+        // Répondre à une question (index de la réponse)
+
     AnswerQuestion(usize),
+        // Retour au jeu principal
+
     BackToMainGame,
+        // Retour à la sélection d'arène
+
     BackToArenaSelection,
+        // Démarrer le combat
+
     StartCombat,
+        // Sélectionner un ingrédient
+
     SelectIngredient(String),
+        // Valider le cocktail créé
+
     ValidateCocktail,
+        // Commencer le combat d'arène
+
     StartArenaCombat,
+        // Retour depuis le combat
+
     BackToMainFromCombat,
+        // Démarrer la phase finale de craft
+
     StartFinalCraft,
+        // Sélectionner une instruction
+
     SelectInstruction(String),
+        // Valider l'ordre des instructions
+
     ValidateInstructionOrder,
 
 }
 
+// Configuration initiale de l'écran de jeu
+
 pub fn setup_game(mut commands: Commands, mut game_state: ResMut<GameScreenState>) {
-    // Initialiser l'etat
+    // On initialise l'etat par defaut
     game_state.current_screen = GameScreenType::Main;
     
-    // Charger les arenes depuis le JSON
+    // On charges les arenes depuis le JSON
     if let Ok(arenas) = JsonLoader::loadJsonArena("assets/caracters/arena.json") {
         game_state.available_arenas = arenas.iter()
             .map(|arena| (arena.name.clone(), arena.theme.clone()))
             .collect();
     }
     
-    // Charger les donnees du bouncer
+    // On charges les donnees du bouncer
     if let Ok(bouncers) = JsonLoader::loadJsonBouncers("assets/caracters/pnj/bouncer.json") {
         if let Some(bouncer) = bouncers.first() {
             let question = bouncer.enigmas.first().unwrap_or(&"Question par defaut".to_string()).clone();
@@ -99,6 +188,8 @@ pub fn setup_game(mut commands: Commands, mut game_state: ResMut<GameScreenState
 
     spawn_main_game_screen(&mut commands);
 }
+
+// On crée l'écran principal du jeu avec les options de base
 
 fn spawn_main_game_screen(commands: &mut Commands) {
     commands.spawn((
@@ -157,6 +248,8 @@ fn spawn_main_game_screen(commands: &mut Commands) {
     });
 }
 
+//  On crée l'écran de sélection d'arène avec la liste des arènes disponibles
+
 fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
@@ -188,7 +281,8 @@ fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreen
         // Description
         parent.spawn(Text::new("Selectionnez l'arene dans laquelle vous souhaitez vous battre"));
         
-        // Container pour les arenes
+                // Conteneur des arènes disponibles
+
         parent.spawn(
             Node {
                 width: Val::Percent(80.0),
@@ -250,6 +344,7 @@ fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreen
     });
 }
 
+// On crée l'écran de question du videur avec les options de réponse
 fn spawn_bouncer_question_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
@@ -273,7 +368,7 @@ fn spawn_bouncer_question_screen(commands: &mut Commands, game_state: &GameScree
             parent.spawn(Text::new("Bouncer: Ragnar"));
         }
         
-        // Question
+        // Question affichage
         parent.spawn(Text::new(format!("Question: {}", game_state.current_question)));
         
         // 4 boutons de reponse
@@ -332,46 +427,48 @@ pub fn handle_game_button_actions(
 ) {
     for (interaction, action, mut background_color) in interaction_query.iter_mut() {
                     match *interaction {
+            // Gestion des clics de boutons
+
             Interaction::Pressed => {
                 match action {
                     GameButtonAction::SelectArena => {
-                                        // Reinitialiser le message d'erreur
+                                        // On reinitialise le message d'erreur
                                         game_state.wrong_answer_message = false;
                         
-                                        // Nettoyer l'ecran actuel
+                                        // On nettoie l'ecran actuel
                                         for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
                         
-                                        // Aller à la selection d'arene
+                                        // pour aller à la selection d'arene
                                         game_state.current_screen = GameScreenType::ArenaSelection;
                                         spawn_arena_selection_screen(&mut commands, &game_state);
                                     }
                     GameButtonAction::ChooseArena(arena_index) => {
                                         game_state.wrong_answer_message = false;
 
-                                        // Sauvegarder l'arene selectionnee
+                                        // Sauvegarde de l'arene selectionnee
                                         if let Some((arena_name, _)) = game_state.available_arenas.get(*arena_index) {
                                             game_state.selected_arena = Some(arena_name.clone());
-                                            game_state.selected_arena_index = Some(*arena_index); // <= AJOUT
+                                            game_state.selected_arena_index = Some(*arena_index);
                                         }
 
-                                        // Nettoyer l'ecran actuel
+                                        // nettoyage de l'ecran actuel
                                         for entity in gameentities.iter() {
                                             commands.entity(entity).despawn_recursive();
                                         }
 
-                                        // Aller à la question du bouncer
+                                        // pour aller à la question du bouncer
                                         game_state.current_screen = GameScreenType::BouncerQuestion;
                                         spawn_bouncer_question_screen(&mut commands, &game_state);
                                     }
                     GameButtonAction::EncounterBouncer => {
-                    // Nettoyer l'ecran actuel
+                    // netoyage de l'ecran actuel
                     for entity in gameentities.iter() {
                         commands.entity(entity).despawn_recursive();
                     }
 
-                    // Changer l'etat et afficher l'ecran de COMBAT maintenant !
+                    // Change l'etat et affiche l'ecran de combat maintenant
                     game_state.current_screen = GameScreenType::Arena;
                     game_state.arena_combat_state = ArenaCombatState::Start;
                     game_state.player_hp = 100;
@@ -382,6 +479,8 @@ pub fn handle_game_button_actions(
                         spawn_arena_combat_screen(&mut commands, &game_state);
 
                     }
+
+                    // Démarage du combat 
                     GameButtonAction::StartArenaCombat => {
                         game_state.show_intro_screen = false;
 
@@ -391,44 +490,47 @@ pub fn handle_game_button_actions(
 
                         spawn_arena_combat_screen(&mut commands, &game_state);
                     }
+                    // Sélection d'ingrédients pour le cocktail
                     GameButtonAction::SelectIngredient(ingredient) => {
-                        // Ajouter l'ingredient selectionne (eviter les doublons si necessaire)
+                        // ajoute l'ingredient selectionne 
                         if !game_state.current_crafting.selected_ingredients.contains(ingredient) {
                             game_state.current_crafting.selected_ingredients.push(ingredient.clone());
                         }
 
-                        // Nettoyer l'ecran actuel
+                        // netoyage de l'ecran actuel
                         for entity in gameentities.iter() {
                             commands.entity(entity).despawn_recursive();
                         }
 
-                        // Rafraîchir l'ecran de combat
+                        // rafraichissement de l'ecran de combat
                         spawn_arena_combat_screen(&mut commands, &game_state);
                     }
+                    // Validation du cocktail créé
                     GameButtonAction::ValidateCocktail => {
-                    // Pour cet exemple, on va dire qu'un cocktail correct contient : Vodka, Jus de citron, Triple sec
                
                     if let Some(recipe) = &game_state.master_recipe {
                         let selected: HashSet<String> = game_state.current_crafting.selected_ingredients.iter().cloned().collect();
                         let expected: HashSet<String> = recipe.ingredients.iter().map(|i| i.name.clone()).collect();
 
                         if selected == expected {
+                            // Cocktail correct
                             game_state.current_crafting.correct = true;
                             game_state.boss_hp /= 2;
                             game_state.show_crafting_phase = true;
 
                             game_state.current_crafting.selected_ingredients.clear();
 
-                              // Nettoyer l'ecran actuel
+                              // nettoyage l'ecran actuel
                             for entity in gameentities.iter() {
                                 commands.entity(entity).despawn_recursive();
                             }
 
-                            // Rafraîchir l'ecran de combat
+                            // on rafraichis l'ecran de combat
                             spawn_arena_combat_screen(&mut commands, &game_state);
                         }
                     }
                     else {
+                         // Cocktail incorrect
                         game_state.current_crafting.correct = false;
                         info!("Mauvais cocktail ! Le boss contre-attaque !");
                         game_state.player_hp -= 20;
@@ -439,12 +541,12 @@ pub fn handle_game_button_actions(
                         }
                     }
 
-                    // Nettoyer l'ecran actuel
+                    // nettoyage l'ecran actuel
                     for entity in gameentities.iter() {
                         commands.entity(entity).despawn_recursive();
                     }
 
-                    // Rafraîchir l'ecran de combat
+                    // Rafraîchissement de l'écran
                     spawn_arena_combat_screen(&mut commands, &game_state);
                 }
                     GameButtonAction::BackToMainFromCombat => {
@@ -453,10 +555,11 @@ pub fn handle_game_button_actions(
                         commands.entity(entity).despawn_recursive();
                     }
 
-                    // Retour au menu principal
+                    // Retour au menu principal depuis le combat
                     game_state.current_screen = GameScreenType::Main;
                     spawn_main_game_screen(&mut commands);
                 }
+                // Démarrage de la phase finale de craft
                 GameButtonAction::StartFinalCraft=> {
                      game_state.show_crafting_phase = false;
                     for entity in arena_ui_query.iter() {
@@ -464,12 +567,14 @@ pub fn handle_game_button_actions(
                     }
                     spawn_arena_crafting_phase_screen(&mut commands, &game_state);
                 }
-
+                // Sélection d'instructions
                 GameButtonAction::SelectInstruction(instruction) => {
                     if !game_state.current_crafting.selected_instructions.contains(&instruction) {
                         game_state.current_crafting.selected_instructions.push(instruction.to_string());
                     }
                 },
+
+                // Validation de l'ordre des instructions
 
                 GameButtonAction::ValidateInstructionOrder => {
                     if let Some(recipe) = &game_state.master_recipe {
@@ -491,6 +596,7 @@ pub fn handle_game_button_actions(
                     }
                 },
 
+                     // Gestion des réponses aux questions
                     GameButtonAction::AnswerQuestion(answer_index) => {
                                         let selected_answer = &game_state.answer_options[*answer_index];
                         
@@ -499,6 +605,8 @@ pub fn handle_game_button_actions(
                                         }
                         
                                      if *selected_answer == game_state.correct_answer {
+                                        // Bonne réponse on charge les données du maître
+
                                         game_state.current_screen = GameScreenType::ArenaPresentation;
 
                                         info!("Bonne reponse : on passe à l'ecran de presentation d'arene.");
@@ -512,6 +620,7 @@ pub fn handle_game_button_actions(
 
                                                     if let Some(master) = masters.get(selected_index) {
                                                         info!("Master trouve pour l'arene {} : {}", selected_index, master.pnj.caracter.name);
+                                                         // Chargement des données du maître
 
                                                         game_state.master_name = Some(master.pnj.caracter.name.clone());
                                                         game_state.master_style = Some(master.pnj.caracter.style.clone());
@@ -522,6 +631,8 @@ pub fn handle_game_button_actions(
                                                     } else {
                                                         info!("Aucun master trouve pour l'index {} ! Utilisation d'un master fictif.", selected_index);
 
+                                                        // Données de fallback
+
                                                         game_state.master_name = Some("Master Inconnu".to_string());
                                                         game_state.master_style = Some("Style Mystere".to_string());
                                                         game_state.master_badge = Some("Badge Inconnu".to_string());
@@ -531,6 +642,7 @@ pub fn handle_game_button_actions(
                                                 } else {
                                                     info!("Aucun index d'arene selectionne ! Utilisation d'un master fictif par defaut.");
 
+                                                    // Données de fallback
                                                     game_state.master_name = Some("Master Inconnu".to_string());
                                                     game_state.master_style = Some("Style Mystere".to_string());
                                                     game_state.master_badge = Some("Badge Inconnu".to_string());
@@ -539,6 +651,8 @@ pub fn handle_game_button_actions(
                                                 }
                                             }
                                             Err(e) => {
+                                                // Données d'erreur
+
                                                 info!("Erreur lors du chargement des masters : {:?}.", e);
 
                                                 game_state.master_name = Some("Master Erreur".to_string());
@@ -553,11 +667,13 @@ pub fn handle_game_button_actions(
                                     }
 
                                     else {
+                                            // Mauvaise réponse on reviens à la sélection d'arène
                                             game_state.wrong_answer_message = true;
                                             game_state.current_screen = GameScreenType::ArenaSelection;
                                             spawn_arena_selection_screen(&mut commands, &game_state);
                                         }
                                     }
+                    // Navigation de retour
                     GameButtonAction::BackToArenaSelection => {
                                         game_state.wrong_answer_message = false;
                         
@@ -583,6 +699,7 @@ pub fn handle_game_button_actions(
                 
                 *background_color = Color::srgb(0.3, 0.3, 0.5).into();
             }
+            // États visuels des boutons
             Interaction::Hovered => {
                 *background_color = Color::srgb(0.25, 0.25, 0.35).into();
             }
@@ -592,15 +709,17 @@ pub fn handle_game_button_actions(
         }
     }
 }
-
+// On nettoie l'écran de jeu en supprimant toutes les entités associées
 pub fn despawn_game(mut commands: Commands, query: Query<Entity, With<GameScreen>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }
 
+// Marqueur de composant pour l'écran de présentation d'arène
 #[derive(Component)]
 pub struct ArenaPresentationUI;
+// On crée l'écran de présentation de l'arène avec les informations du maître
 fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
@@ -617,11 +736,14 @@ fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &GameScr
         ArenaPresentationUI,
     ))
     .with_children(|parent| {
+        // Titre de l'arène
         if let Some(selected_arena) = &game_state.selected_arena {
             parent.spawn(Text::new(format!("Presentation de l'Arene: {}", selected_arena)));
         } else {
             parent.spawn(Text::new("Presentation de l'Arene"));
         }
+
+        // Informations du maître
 
         if let Some(master_name) = &game_state.master_name {
             parent.spawn(Text::new(format!("Maître de l'Arene: {}", master_name)));
@@ -635,6 +757,9 @@ fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &GameScr
         if let Some(master_badge) = &game_state.master_badge {
             parent.spawn(Text::new(format!("Badge: {}", master_badge)));
         }
+
+        // Liste des attaques
+
 
         parent.spawn(Text::new("Attaques:"));
         for attack in &game_state.master_attacks {
@@ -662,6 +787,7 @@ fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &GameScr
     });
 }
 
+// États possibles du combat d'arène
 #[derive(Default, PartialEq)]
 pub enum ArenaCombatState {
     #[default]
@@ -672,6 +798,7 @@ pub enum ArenaCombatState {
     Defeat,
 }
 
+// Structure qui représente l'état de création d'un cocktail
 #[derive(Default)]
 pub struct CurrentCocktailCrafting {
     pub selected_ingredients: Vec<String>,
@@ -681,6 +808,7 @@ pub struct CurrentCocktailCrafting {
     pub instruction_correct: bool,
 }
 
+// Crée l'écran de combat d'arène avec les différentes phases de jeu
 fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
@@ -697,6 +825,8 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
         ArenaUI,
     ))
     .with_children(|parent| {
+        // Écran d'introduction au combat
+
         if game_state.show_intro_screen { 
             // Titre
             parent.spawn(Text::new(format!(
@@ -705,7 +835,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
                 game_state.selected_arena.as_deref().unwrap_or("???"),
             )));
 
-            // Bouton "Commencer le combat"
+            // Bouton de démarrage du combat
             parent
                 .spawn((
                     Button,
@@ -743,6 +873,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
                 .with_child(Text::new("Retour"));
 
             return;
+        // Phase de transition après validation du cocktail
         } else if game_state.show_crafting_phase {
             parent.spawn(Text::new(
                 "🎉 Bien joue ! Tu as trouve la bonne recette.\nMaintenant concocte le cocktail comme il faut pour finir le boss."
@@ -755,18 +886,21 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
             return;
         }
 
+        // On affiche les points de vie
+
         if let Some(master_name) = &game_state.master_name {
             parent.spawn(Text::new(format!("Combat contre le Maître: {}", master_name)));
         } else {
             parent.spawn(Text::new("Combat d'Arene"));
         }
 
-        // HP
+        // Affichage des points de vie
         parent.spawn(Text::new(format!("Votre HP: {}", game_state.player_hp)));
         parent.spawn(Text::new(format!("HP du Boss: {}", game_state.boss_hp)));
 
         parent.spawn(Text::new("Selectionnez les ingredients pour le cocktail:"));
 
+        // Liste des ingrédients disponibles
         let static_ingredients = vec![
             "Jus de citron",
             "Vodka",
@@ -783,6 +917,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
             .map(|s| s.to_string())
             .collect();
 
+        // Ajout des ingrédients de la recette du maître
         if let Some(recipe) = &game_state.master_recipe {
             for ingredient in &recipe.ingredients {
                 all_ingredients_set.insert(ingredient.name.clone());
@@ -794,6 +929,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
 
         println!("Liste finale des ingredients affiches : {:?}", all_ingredients);
 
+        // On crée les boutons d'ingrédients
         for ingredient in all_ingredients {
             parent
                 .spawn((
@@ -814,11 +950,13 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
                 .with_child(Text::new(ingredient));
         }
 
+        // Affichage des ingrédients sélectionnés
         parent.spawn(Text::new(format!(
             "Ingredients selectionnes: {:?}",
             game_state.current_crafting.selected_ingredients
         )));
 
+        // Bouton de validation du cocktail
         parent
             .spawn((
                 Button,
@@ -837,6 +975,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
             ))
             .with_child(Text::new("Valider le Cocktail"));
 
+        // Validation du cocktail
         if let Some(recipe) = &game_state.master_recipe {
             let selected = &game_state.current_crafting.selected_ingredients;
             let expected: HashSet<String> = recipe.ingredients.iter().map(|i| i.name.clone()).collect();
@@ -862,7 +1001,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
             parent.spawn(Text::new("Aucune recette de maître disponible."));
         }
 
-        
+        // Bouton de retour
         parent
             .spawn((
                 Button,
@@ -883,6 +1022,7 @@ fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenSta
     });
 }
 
+// On crée l'écran de phase finale de craft avec l'ordre des instructions
 fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameScreenState) {
     use rand::seq::SliceRandom;
     use rand::thread_rng;
@@ -905,11 +1045,14 @@ fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameS
         parent.spawn(Text::new("Derniere etape : remettre les instructions dans le bon ordre !"));
 
         if let Some(recipe) = &game_state.master_recipe {
+
+            // Mélange aléatoire des instructions pour le défi
             let mut shuffled_instructions = recipe.instructions.clone();
             shuffled_instructions.shuffle(&mut thread_rng());
 
             parent.spawn(Text::new("Cliquez sur les etapes dans l'ordre :"));
 
+            // Création des boutons d'instructions
             for (index, instruction) in shuffled_instructions.iter().enumerate() {
                 parent
                     .spawn((
@@ -930,11 +1073,13 @@ fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameS
                     .with_child(Text::new(format!("Etape {} : {}", index + 1, instruction)));
             }
 
+            // Affichage de l'ordre sélectionné
             parent.spawn(Text::new(format!(
                 "Ordre selectionne: {:?}",
                 game_state.current_crafting.selected_instructions
             )));
 
+            // Bouton de validation de l'ordre
             parent
                 .spawn((
                     Button,
@@ -953,6 +1098,7 @@ fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameS
                 ))
                 .with_child(Text::new("Valider l'ordre"));
 
+            // Affichage du résultat si valide
             if game_state.current_crafting.instruction_correct {
                 parent.spawn(Text::new("✅ Bravo, vous avez fini le boss !"));
             }
@@ -960,6 +1106,7 @@ fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameS
             parent.spawn(Text::new("Aucune recette disponible."));
         }
 
+        // Bouton de retour
         parent
             .spawn((
                 Button,
@@ -980,6 +1127,8 @@ fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameS
     });
 }
 
+/// On crée l'écran de fin d'arène après la victoire
+
 fn spawn_arenaend_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
@@ -996,6 +1145,7 @@ fn spawn_arenaend_screen(commands: &mut Commands, game_state: &GameScreenState) 
         ArenaUI,
     ))
     .with_children(|parent| {
+        // Récapitulatif de la victoire
         parent.spawn(Text::new("🎉 Bravo ! Vous avez battu le boss ! 🏆"));
 
         parent.spawn(Text::new(format!(
@@ -1003,6 +1153,8 @@ fn spawn_arenaend_screen(commands: &mut Commands, game_state: &GameScreenState) 
             game_state.master_name.as_deref().unwrap_or("???"),
             game_state.selected_arena.as_deref().unwrap_or("???"),
         )));
+
+        // Bouton de retour à la sélection des niveaux
 
         parent
             .spawn((
