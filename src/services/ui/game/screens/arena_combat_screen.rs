@@ -38,6 +38,11 @@ pub fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScree
     });
 }
 
+/// Affiche le contenu de l'écran d'introduction du combat d'Arène.
+/// Cet écran affiche le titre du combat, le nom du Maître d'Arène et un bouton pour commencer le combat.
+/// # Arguments
+/// - `parent`: Le parent dans lequel le contenu sera ajouté.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran d'introduction.
 fn spawn_intro_content(parent: &mut ChildBuilder, game_state: &GameScreenState) {
     // Titre
     parent.spawn(Text::new(format!(
@@ -85,6 +90,9 @@ fn spawn_intro_content(parent: &mut ChildBuilder, game_state: &GameScreenState) 
         .with_child(Text::new("Retour"));
 }
 
+/// Affiche le contenu de la phase de crafting.
+/// # Arguments
+/// - `parent`: Le parent dans lequel le contenu sera ajouté.
 fn spawn_crafting_phase_content(parent: &mut ChildBuilder) {
     parent.spawn(Text::new(
         "🎉 Bien joué ! Tu as trouvé la bonne recette.\nMaintenant concocte le cocktail comme il faut pour finir le boss."
@@ -201,6 +209,9 @@ fn spawn_ingredient_selection(parent: &mut ChildBuilder, game_state: &GameScreen
     )));
 }
 
+/// Affiche le bouton de validation du cocktail et son état.
+/// # Arguments
+/// - `parent`: Le parent dans lequel le bouton sera ajouté.
 fn spawn_cocktail_validation(parent: &mut ChildBuilder, game_state: &GameScreenState) {
     parent
         .spawn((

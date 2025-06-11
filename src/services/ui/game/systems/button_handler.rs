@@ -5,6 +5,7 @@ use crate::services::ui::game::{
     ArenaUI, screens::*
 };
 use crate::services::json_loader::JsonLoader;
+use std::collections::HashSet;
 
 /// Gère les actions des boutons dans l'interface du jeu.
 ///
@@ -99,17 +100,40 @@ fn handle_button_press(
             spawn_arena_combat_screen(commands, game_state);
         }
         GameButtonAction::ValidateCocktail => {
-            // TODO: Implémenter la validation du cocktail
-            if game_state.current_crafting.selected_ingredients.len() >= 3 {
+            // Valider le cocktail en comparant avec la recette du maître
+            let is_cocktail_correct = validate_cocktail_recipe(game_state);
+            
+            if is_cocktail_correct {
+                // Cocktail correct - transition vers la phase de crafting
                 game_state.current_crafting.cocktail_ready = true;
+                game_state.show_crafting_phase = true;
+                game_state.show_intro_screen = false;
+                
+                // Vider la sélection d'ingrédients pour la phase suivante
+                game_state.current_crafting.selected_ingredients.clear();
+                
+                // Rafraîchir l'écran pour afficher la phase de crafting
+                for entity in arena_ui_query.iter() {
+                    commands.entity(entity).despawn_recursive();
+                }
+                spawn_arena_combat_screen(commands, game_state);
             } else {
-                game_state.current_crafting.cocktail_ready = false;
+                // Cocktail incorrect - infliger des dégâts au joueur
+                game_state.player_hp = game_state.player_hp.saturating_sub(20); // Réduire HP de 20
+                game_state.current_crafting.selected_ingredients.clear(); // Vider la sélection
+                
+                // Vérifier si le joueur a perdu
+                if game_state.player_hp == 0 {
+                    // Joueur défait - aller à l'écran de fin avec défaite
+                    game_state.current_crafting.cocktail_ready = false;
+                    clear_screen();
+                    spawn_arena_end_screen(commands, game_state);
+                } else {
+                    // Continuer le combat - rafraîchir l'écran
+                    clear_screen();
+                    spawn_arena_combat_screen(commands, game_state);
+                }
             }
-            game_state.current_crafting.selected_ingredients.clear();
-            game_state.current_crafting.selected_instructions.clear();
-            game_state.current_crafting.instruction_correct = false;
-            clear_screen();
-            spawn_arena_end_screen(commands, game_state);
         }
         GameButtonAction::BackToMainFromCombat => {
             clear_screen();
@@ -232,5 +256,21 @@ fn load_master_data(game_state: &mut GameScreenState) {
         Err(e) => {
             info!("Erreur lors du chargement des masters : {:?}.", e);
         }
+    }
+}
+
+/// Valide si les ingrédients sélectionnés correspondent à la recette du maître
+fn validate_cocktail_recipe(game_state: &GameScreenState) -> bool {
+    if let Some(recipe) = &game_state.master_recipe {
+        let selected_ingredients: std::collections::HashSet<String> = 
+            game_state.current_crafting.selected_ingredients.iter().cloned().collect();
+        
+        let expected_ingredients: std::collections::HashSet<String> = 
+            recipe.ingredients.iter().map(|i| i.name.clone()).collect();
+        
+        // Vérifier que les ingrédients sélectionnés correspondent exactement à la recette
+        selected_ingredients == expected_ingredients
+    } else {
+        false // Pas de recette = échec
     }
 }

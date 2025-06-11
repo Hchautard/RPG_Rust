@@ -4,12 +4,15 @@ use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaUI};
 
 /// Affiche l'écran de fin d'Arène.
-/// Cet écran est affiché lorsque le joueur a battu le boss de l'Arène.
-/// Il affiche un message de félicitations, le nom du Maître de l'Arène et le nom de l'Arène.
+/// Cet écran affiche différents messages selon que le joueur ait gagné ou perdu.
 /// # Arguments
 /// - `commands`: Les commandes pour créer des entités dans Bevy.
 /// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de fin d'Arène.
 pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenState) {
+    // Déterminer si le joueur a gagné ou perdu
+    let player_won = game_state.boss_hp == 0 && game_state.player_hp > 0;
+    let player_lost = game_state.player_hp == 0;
+    
     commands.spawn((
         Node {
             width: Val::Percent(100.0),
@@ -25,14 +28,35 @@ pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenSt
         ArenaUI,
     ))
     .with_children(|parent| {
-        parent.spawn(Text::new("🎉 Bravo ! Vous avez battu le boss ! 🏆"));
+        // Afficher le message approprié selon le résultat
+        if player_won {
+            parent.spawn(Text::new("🎉 Bravo ! Vous avez battu le boss ! 🏆"));
+            
+            parent.spawn(Text::new(format!(
+                "Maître battu : {}\nArène : {}",
+                game_state.master_name.as_deref().unwrap_or("???"),
+                game_state.selected_arena.as_deref().unwrap_or("???"),
+            )));
+        } else if player_lost {
+            parent.spawn(Text::new("💀 Défaite ! Vous êtes tombé au combat... 💀"));
+            
+            parent.spawn(Text::new(format!(
+                "Vous avez été vaincu par {} dans l'arène {}.\nVos HP sont tombés à zéro !",
+                game_state.master_name.as_deref().unwrap_or("???"),
+                game_state.selected_arena.as_deref().unwrap_or("???"),
+            )));
+        } else {
+            // Cas où le combat s'est terminé autrement (ne devrait pas arriver normalement)
+            parent.spawn(Text::new("Combat terminé"));
+            
+            parent.spawn(Text::new(format!(
+                "HP restants - Joueur: {} | Boss: {}",
+                game_state.player_hp,
+                game_state.boss_hp
+            )));
+        }
 
-        parent.spawn(Text::new(format!(
-            "Maître battu : {}\nArène : {}",
-            game_state.master_name.as_deref().unwrap_or("???"),
-            game_state.selected_arena.as_deref().unwrap_or("???"),
-        )));
-
+        // Bouton pour retourner à la sélection des arènes
         parent
             .spawn((
                 Button,
