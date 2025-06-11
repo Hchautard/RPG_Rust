@@ -28,4 +28,5 @@ pub enum GameButtonAction {
     StartFinalCraft,
     SelectInstruction(String),
     ValidateInstructionOrder,
+    ClearInstructions
 }

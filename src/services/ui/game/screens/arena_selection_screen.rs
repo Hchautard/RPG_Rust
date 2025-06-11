@@ -24,7 +24,7 @@ pub fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameSc
         GameScreen,
     ))
     .with_children(|parent| {
-        parent.spawn(Text::new("Choisissez votre Arène"));
+        parent.spawn(Text::new("Choisissez votre Arene"));
         
         // Message d'erreur si mauvaise réponse au bouncer
         if game_state.wrong_answer_message {

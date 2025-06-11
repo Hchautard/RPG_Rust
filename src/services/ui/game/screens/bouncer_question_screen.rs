@@ -28,7 +28,7 @@ pub fn spawn_bouncer_question_screen(commands: &mut Commands, game_state: &GameS
     .with_children(|parent| {
         // Titre avec l'arène sélectionnée
         if let Some(selected_arena) = &game_state.selected_arena {
-            parent.spawn(Text::new(format!("Arène: {} - Bouncer: Ragnar", selected_arena)));
+            parent.spawn(Text::new(format!("Arene: {} - Bouncer: Ragnar", selected_arena)));
         } else {
             parent.spawn(Text::new("Bouncer: Ragnar"));
         }

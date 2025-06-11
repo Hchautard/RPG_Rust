@@ -52,7 +52,7 @@ pub enum GameScreenType {
     Arena,
 }
 
-/// État du combat dans l'Arène
+/// État du combat dans l'Arene
 #[derive(Default, PartialEq)]
 pub enum ArenaCombatState {
     #[default]

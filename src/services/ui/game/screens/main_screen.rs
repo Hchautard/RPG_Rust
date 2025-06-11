@@ -43,7 +43,7 @@ pub fn spawn_main_game_screen(commands: &mut Commands) {
                 BackgroundColor(NORMAL_BUTTON),
                 GameButtonAction::SelectArena,
             ))
-            .with_child(Text::new("Sélectionner une Arène"));
+            .with_child(Text::new("Sélectionner une Arene"));
 
         // Bouton retour
         parent

@@ -3,11 +3,11 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaUI};
 
-/// Affiche l'écran de fin d'Arène.
+/// Affiche l'écran de fin d'Arene.
 /// Cet écran affiche différents messages selon que le joueur ait gagné ou perdu.
 /// # Arguments
 /// - `commands`: Les commandes pour créer des entités dans Bevy.
-/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de fin d'Arène.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de fin d'Arene.
 pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenState) {
     // Déterminer si le joueur a gagné ou perdu
     let player_won = game_state.boss_hp == 0 && game_state.player_hp > 0;
@@ -30,24 +30,24 @@ pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenSt
     .with_children(|parent| {
         // Afficher le message approprié selon le résultat
         if player_won {
-            parent.spawn(Text::new("🎉 Bravo ! Vous avez battu le boss ! 🏆"));
+            parent.spawn(Text::new("Bravo ! Vous avez battu le boss ! 🏆"));
             
             parent.spawn(Text::new(format!(
-                "Maître battu : {}\nArène : {}",
+                "Maitre battu : {}\nArene : {}",
                 game_state.master_name.as_deref().unwrap_or("???"),
                 game_state.selected_arena.as_deref().unwrap_or("???"),
             )));
         } else if player_lost {
-            parent.spawn(Text::new("💀 Défaite ! Vous êtes tombé au combat... 💀"));
+            parent.spawn(Text::new("Defaite ! Vous etes tombe au combat..."));
             
             parent.spawn(Text::new(format!(
-                "Vous avez été vaincu par {} dans l'arène {}.\nVos HP sont tombés à zéro !",
+                "Vous avez ete vaincu par {} dans l'arene {}.\nVos HP sont tombes a zero !",
                 game_state.master_name.as_deref().unwrap_or("???"),
                 game_state.selected_arena.as_deref().unwrap_or("???"),
             )));
         } else {
             // Cas où le combat s'est terminé autrement (ne devrait pas arriver normalement)
-            parent.spawn(Text::new("Combat terminé"));
+            parent.spawn(Text::new("Combat termine"));
             
             parent.spawn(Text::new(format!(
                 "HP restants - Joueur: {} | Boss: {}",
@@ -73,6 +73,6 @@ pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenSt
                 BorderRadius::MAX,
                 BackgroundColor(NORMAL_BUTTON),
             ))
-            .with_child(Text::new("Retour à la sélection des niveaux"));
+            .with_child(Text::new("Retour a la selection des niveaux"));
     });
 }

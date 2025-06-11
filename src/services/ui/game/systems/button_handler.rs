@@ -151,6 +151,11 @@ fn handle_button_press(
             if !game_state.current_crafting.selected_instructions.contains(instruction) {
                 game_state.current_crafting.selected_instructions.push(instruction.to_string());
             }
+
+            for entity in arena_ui_query.iter() {
+                commands.entity(entity).despawn_recursive();
+            }
+            spawn_arena_crafting_phase_screen(commands, game_state);
         }
         GameButtonAction::ValidateInstructionOrder => {
             if let Some(recipe) = &game_state.master_recipe {
@@ -158,6 +163,7 @@ fn handle_button_press(
                 let selected = &game_state.current_crafting.selected_instructions;
 
                 if selected == expected {
+                    // Ordre correct - victoire !
                     game_state.current_crafting.instruction_correct = true;
                     game_state.boss_hp = 0;
                     for entity in arena_ui_query.iter() {
@@ -165,7 +171,25 @@ fn handle_button_press(
                     }
                     spawn_arena_end_screen(commands, game_state);
                 } else {
+                    // Ordre incorrect - infliger des dégâts et permettre de réessayer
+                    game_state.player_hp = game_state.player_hp.saturating_sub(15); 
+                    game_state.current_crafting.selected_instructions.clear(); 
                     game_state.current_crafting.instruction_correct = false;
+                    
+                    // Vérifier si le joueur a perdu
+                    if game_state.player_hp == 0 {
+                        
+                        for entity in arena_ui_query.iter() {
+                            commands.entity(entity).despawn_recursive();
+                        }
+                        spawn_arena_end_screen(commands, game_state);
+                    } else {
+                        
+                        for entity in arena_ui_query.iter() {
+                            commands.entity(entity).despawn_recursive();
+                        }
+                        spawn_arena_crafting_phase_screen(commands, game_state);
+                    }
                 }
             }
         }
@@ -185,6 +209,13 @@ fn handle_button_press(
             game_state.current_screen = GameScreenType::Arena;
             game_state.reset_combat();
             spawn_arena_combat_screen(commands, game_state);
+        }
+        GameButtonAction::ClearInstructions => {
+            game_state.current_crafting.selected_instructions.clear();
+            for entity in arena_ui_query.iter() {
+                commands.entity(entity).despawn_recursive();
+            }
+            spawn_arena_crafting_phase_screen(commands, game_state);
         }
     }
 }

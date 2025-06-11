@@ -3,9 +3,9 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaPresentationUI};
 
-/// Affiche l'écran de présentation de l'Arène.
-/// Cet écran affiche les informations sur l'Arène sélectionnée, le Maître de l'Arène,
-/// ses attaques, et un bouton pour continuer vers l'Arène.
+/// Affiche l'écran de présentation de l'Arene.
+/// Cet écran affiche les informations sur l'Arene sélectionnée, le Maître de l'Arene,
+/// ses attaques, et un bouton pour continuer vers l'Arene.
 /// # Arguments
 /// - `commands`: Les commandes pour créer des entités dans Bevy.
 /// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de présentation.
@@ -26,13 +26,13 @@ pub fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &Gam
     ))
     .with_children(|parent| {
         if let Some(selected_arena) = &game_state.selected_arena {
-            parent.spawn(Text::new(format!("Présentation de l'Arène: {}", selected_arena)));
+            parent.spawn(Text::new(format!("Presentation de l'Arene: {}", selected_arena)));
         } else {
-            parent.spawn(Text::new("Présentation de l'Arène"));
+            parent.spawn(Text::new("Presentation de l'Arene"));
         }
 
         if let Some(master_name) = &game_state.master_name {
-            parent.spawn(Text::new(format!("Maître de l'Arène: {}", master_name)));
+            parent.spawn(Text::new(format!("Maitre de l'Arene: {}", master_name)));
             parent.spawn(Text::new(game_state.master_dialogs.join("\n")));
         }
         
@@ -49,7 +49,7 @@ pub fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &Gam
             parent.spawn(Text::new(format!("- {}", attack)));
         }
 
-        // Bouton pour continuer vers l'Arène
+        // Bouton pour continuer vers l'Arene
         parent
             .spawn((
                 Button,
