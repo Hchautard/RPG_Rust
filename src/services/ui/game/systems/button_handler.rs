@@ -5,7 +5,13 @@ use crate::services::ui::game::{
     ArenaUI, screens::*
 };
 use crate::services::json_loader::JsonLoader;
+use std::collections::HashSet;
 
+/// Gère les actions des boutons dans l'interface du jeu.
+///
+/// Cette fonction est appelée à chaque frame pour vérifier les interactions
+/// avec les boutons du jeu. Elle met à jour l'état du jeu en fonction des actions
+/// des boutons et change la couleur de fond des boutons en fonction de leur état.
 pub fn handle_game_button_actions(
     mut interaction_query: Query<(
         &Interaction,
@@ -39,6 +45,9 @@ pub fn handle_game_button_actions(
     }
 }
 
+// Fonction pour gérer les actions des boutons
+// Cette fonction est appelée lorsque l'utilisateur interagit avec un bouton.
+// Elle met à jour l'état du jeu en fonction de l'action du bouton et gère les transitions d'écran.
 fn handle_button_press(
     action: &GameButtonAction,
     commands: &mut Commands,
@@ -91,17 +100,40 @@ fn handle_button_press(
             spawn_arena_combat_screen(commands, game_state);
         }
         GameButtonAction::ValidateCocktail => {
-            // TODO: Implémenter la validation du cocktail
-            if game_state.current_crafting.selected_ingredients.len() >= 3 {
+            // Valider le cocktail en comparant avec la recette du maître
+            let is_cocktail_correct = validate_cocktail_recipe(game_state);
+            
+            if is_cocktail_correct {
+                // Cocktail correct - transition vers la phase de crafting
                 game_state.current_crafting.cocktail_ready = true;
+                game_state.show_crafting_phase = true;
+                game_state.show_intro_screen = false;
+                
+                // Vider la sélection d'ingrédients pour la phase suivante
+                game_state.current_crafting.selected_ingredients.clear();
+                
+                // Rafraîchir l'écran pour afficher la phase de crafting
+                for entity in arena_ui_query.iter() {
+                    commands.entity(entity).despawn_recursive();
+                }
+                spawn_arena_combat_screen(commands, game_state);
             } else {
-                game_state.current_crafting.cocktail_ready = false;
+                // Cocktail incorrect - infliger des dégâts au joueur
+                game_state.player_hp = game_state.player_hp.saturating_sub(20); // Réduire HP de 20
+                game_state.current_crafting.selected_ingredients.clear(); // Vider la sélection
+                
+                // Vérifier si le joueur a perdu
+                if game_state.player_hp == 0 {
+                    // Joueur défait - aller à l'écran de fin avec défaite
+                    game_state.current_crafting.cocktail_ready = false;
+                    clear_screen();
+                    spawn_arena_end_screen(commands, game_state);
+                } else {
+                    // Continuer le combat - rafraîchir l'écran
+                    clear_screen();
+                    spawn_arena_combat_screen(commands, game_state);
+                }
             }
-            game_state.current_crafting.selected_ingredients.clear();
-            game_state.current_crafting.selected_instructions.clear();
-            game_state.current_crafting.instruction_correct = false;
-            clear_screen();
-            spawn_arena_end_screen(commands, game_state);
         }
         GameButtonAction::BackToMainFromCombat => {
             clear_screen();
@@ -119,6 +151,11 @@ fn handle_button_press(
             if !game_state.current_crafting.selected_instructions.contains(instruction) {
                 game_state.current_crafting.selected_instructions.push(instruction.to_string());
             }
+
+            for entity in arena_ui_query.iter() {
+                commands.entity(entity).despawn_recursive();
+            }
+            spawn_arena_crafting_phase_screen(commands, game_state);
         }
         GameButtonAction::ValidateInstructionOrder => {
             if let Some(recipe) = &game_state.master_recipe {
@@ -126,6 +163,7 @@ fn handle_button_press(
                 let selected = &game_state.current_crafting.selected_instructions;
 
                 if selected == expected {
+                    // Ordre correct - victoire !
                     game_state.current_crafting.instruction_correct = true;
                     game_state.boss_hp = 0;
                     for entity in arena_ui_query.iter() {
@@ -133,7 +171,25 @@ fn handle_button_press(
                     }
                     spawn_arena_end_screen(commands, game_state);
                 } else {
+                    // Ordre incorrect - infliger des dégâts et permettre de réessayer
+                    game_state.player_hp = game_state.player_hp.saturating_sub(15); 
+                    game_state.current_crafting.selected_instructions.clear(); 
                     game_state.current_crafting.instruction_correct = false;
+                    
+                    // Vérifier si le joueur a perdu
+                    if game_state.player_hp == 0 {
+                        
+                        for entity in arena_ui_query.iter() {
+                            commands.entity(entity).despawn_recursive();
+                        }
+                        spawn_arena_end_screen(commands, game_state);
+                    } else {
+                        
+                        for entity in arena_ui_query.iter() {
+                            commands.entity(entity).despawn_recursive();
+                        }
+                        spawn_arena_crafting_phase_screen(commands, game_state);
+                    }
                 }
             }
         }
@@ -154,10 +210,19 @@ fn handle_button_press(
             game_state.reset_combat();
             spawn_arena_combat_screen(commands, game_state);
         }
+        GameButtonAction::ClearInstructions => {
+            game_state.current_crafting.selected_instructions.clear();
+            for entity in arena_ui_query.iter() {
+                commands.entity(entity).despawn_recursive();
+            }
+            spawn_arena_crafting_phase_screen(commands, game_state);
+        }
     }
 }
 
-// Fonctions helper
+/// Gère le choix de l'arène sélectionnée par l'utilisateur.
+/// Cette fonction met à jour l'état du jeu avec l'arène sélectionnée et
+/// prépare l'écran pour la question du bouncer.
 fn handle_arena_choice(
     commands: &mut Commands,
     game_state: &mut ResMut<GameScreenState>,
@@ -179,6 +244,8 @@ fn handle_arena_choice(
     spawn_bouncer_question_screen(commands, game_state);
 }
 
+/// Gère la réponse du joueur à la question du bouncer.
+/// Cette fonction vérifie si la réponse est correcte et met à jour l'état du jeu en conséquence.
 fn handle_bouncer_answer(
     commands: &mut Commands,
     game_state: &mut ResMut<GameScreenState>,
@@ -202,6 +269,7 @@ fn handle_bouncer_answer(
     }
 }
 
+/// Charge les données du maître (master) sélectionné dans l'état du jeu.
 fn load_master_data(game_state: &mut GameScreenState) {
     match JsonLoader::load_json_masters("assets/caracters/pnj/masters.json") {
         Ok(masters) => {
@@ -219,5 +287,21 @@ fn load_master_data(game_state: &mut GameScreenState) {
         Err(e) => {
             info!("Erreur lors du chargement des masters : {:?}.", e);
         }
+    }
+}
+
+/// Valide si les ingrédients sélectionnés correspondent à la recette du maître
+fn validate_cocktail_recipe(game_state: &GameScreenState) -> bool {
+    if let Some(recipe) = &game_state.master_recipe {
+        let selected_ingredients: std::collections::HashSet<String> = 
+            game_state.current_crafting.selected_ingredients.iter().cloned().collect();
+        
+        let expected_ingredients: std::collections::HashSet<String> = 
+            recipe.ingredients.iter().map(|i| i.name.clone()).collect();
+        
+        // Vérifier que les ingrédients sélectionnés correspondent exactement à la recette
+        selected_ingredients == expected_ingredients
+    } else {
+        false // Pas de recette = échec
     }
 }

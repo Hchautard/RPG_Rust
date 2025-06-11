@@ -7,7 +7,7 @@ use crossterm::{
 use ratatui::{prelude::*, widgets::*};
 use std::io::{self, stdout};
 
-// Interface utilisateur en mode terminal
+/// Interface utilisateur en mode terminal
 pub(crate) struct Displayer {
     // Terminal configuré avec crossterm
     terminal: Terminal<CrosstermBackend<std::io::Stdout>>,

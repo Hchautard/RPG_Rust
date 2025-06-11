@@ -3,22 +3,22 @@ use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON};
 use bevy::prelude::*;
 use bevy::ui::{AlignItems, FlexDirection, JustifyContent, UiRect, Val};
 
-// Marqueur de composant pour identifier les entités de l'écran des aptitudes
+/// Marqueur de composant pour identifier les entités de l'écran des aptitudes
 #[derive(Component)]
 pub struct AptitudesScreen;
 
-// Ressource qui contient la liste des aptitudes à afficher
+/// Ressource qui contient la liste des aptitudes à afficher
 #[derive(Resource)]
 pub struct AptitudeList {
     // Vecteur de toutes les aptitudes disponibles
     pub aptitudes: Vec<Aptitude>,
 }
 
-// On crée l'interface d'affichage des aptitudes avec la liste complète
-
+/// On crée l'interface d'affichage des aptitudes avec la liste complète
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `aptitude_list`: La liste des aptitudes à afficher, passée en tant que ressource.
 pub fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<AptitudeList>) {
-    // Conteneur principal de l'écran
-
     commands
         .spawn((
             Node {
@@ -62,8 +62,7 @@ pub fn setup_aptitudes_screen(mut commands: Commands, aptitude_list: Res<Aptitud
         });
 }
 
-// On nettoie l'écran des aptitudes en supprimant toutes les entités associées
-
+/// On nettoie l'écran des aptitudes en supprimant toutes les entités associées
 pub fn despawn_aptitudes_screen(
     mut commands: Commands,
     query: Query<Entity, With<AptitudesScreen>>,

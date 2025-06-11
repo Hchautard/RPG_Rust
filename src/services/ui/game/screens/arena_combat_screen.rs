@@ -4,6 +4,12 @@ use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaUI};
 use std::collections::HashSet;
 
+/// Affiche l'écran de combat d'Arene.
+/// Cet écran permet de combattre un Maître d'Arene en sélectionnant des ingrédients pour concocter un cocktail.
+/// Il affiche les HP du joueur et du boss, ainsi que les ingrédients sélectionnés.
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de combat.
 pub fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {
@@ -32,6 +38,11 @@ pub fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScree
     });
 }
 
+/// Affiche le contenu de l'écran d'introduction du combat d'Arene.
+/// Cet écran affiche le titre du combat, le nom du Maître d'Arene et un bouton pour commencer le combat.
+/// # Arguments
+/// - `parent`: Le parent dans lequel le contenu sera ajouté.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran d'introduction.
 fn spawn_intro_content(parent: &mut ChildBuilder, game_state: &GameScreenState) {
     // Titre
     parent.spawn(Text::new(format!(
@@ -79,9 +90,12 @@ fn spawn_intro_content(parent: &mut ChildBuilder, game_state: &GameScreenState) 
         .with_child(Text::new("Retour"));
 }
 
+/// Affiche le contenu de la phase de crafting.
+/// # Arguments
+/// - `parent`: Le parent dans lequel le contenu sera ajouté.
 fn spawn_crafting_phase_content(parent: &mut ChildBuilder) {
     parent.spawn(Text::new(
-        "🎉 Bien joué ! Tu as trouvé la bonne recette.\nMaintenant concocte le cocktail comme il faut pour finir le boss."
+        "Bien joue ! Tu as trouve la bonne recette.\nMaintenant concocte le cocktail comme il faut pour finir le boss."
     ));
 
     parent
@@ -106,9 +120,9 @@ fn spawn_crafting_phase_content(parent: &mut ChildBuilder) {
 fn spawn_combat_content(parent: &mut ChildBuilder, game_state: &GameScreenState) {
     // Titre du combat
     if let Some(master_name) = &game_state.master_name {
-        parent.spawn(Text::new(format!("Combat contre le Maître: {}", master_name)));
+        parent.spawn(Text::new(format!("Combat contre le Maitre: {}", master_name)));
     } else {
-        parent.spawn(Text::new("Combat d'Arène"));
+        parent.spawn(Text::new("Combat d'Arene"));
     }
 
     // HP
@@ -142,7 +156,7 @@ fn spawn_combat_content(parent: &mut ChildBuilder, game_state: &GameScreenState)
 }
 
 fn spawn_ingredient_selection(parent: &mut ChildBuilder, game_state: &GameScreenState) {
-    parent.spawn(Text::new("Sélectionnez les ingrédients pour le cocktail:"));
+    parent.spawn(Text::new("Selectionnez les ingredients pour le cocktail:"));
 
     let static_ingredients = vec![
         "Jus de citron",
@@ -190,11 +204,14 @@ fn spawn_ingredient_selection(parent: &mut ChildBuilder, game_state: &GameScreen
     }
 
     parent.spawn(Text::new(format!(
-        "Ingrédients sélectionnés: {:?}",
+        "Ingredients selectionnes: {:?}",
         game_state.current_crafting.selected_ingredients
     )));
 }
 
+/// Affiche le bouton de validation du cocktail et son état.
+/// # Arguments
+/// - `parent`: Le parent dans lequel le bouton sera ajouté.
 fn spawn_cocktail_validation(parent: &mut ChildBuilder, game_state: &GameScreenState) {
     parent
         .spawn((
@@ -224,9 +241,9 @@ fn spawn_cocktail_validation(parent: &mut ChildBuilder, game_state: &GameScreenS
         let is_valid = selected.len() == expected.len() && incorrect_count == 0;
 
         let validation_text = if is_valid {
-            "✅ Cocktail valide !".to_string()
+            "Cocktail valide !".to_string()
         } else {
-            format!("❌ Cocktail incorrect : {} bon(s), {} mauvais.", correct_count, incorrect_count)
+            format!("Cocktail incorrect : {} bon(s), {} mauvais.", correct_count, incorrect_count)
         };
 
         parent.spawn(Text::new(validation_text));
