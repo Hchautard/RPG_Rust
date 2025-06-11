@@ -6,6 +6,11 @@ use crate::services::ui::game::{
 };
 use crate::services::json_loader::JsonLoader;
 
+/// Gère les actions des boutons dans l'interface du jeu.
+///
+/// Cette fonction est appelée à chaque frame pour vérifier les interactions
+/// avec les boutons du jeu. Elle met à jour l'état du jeu en fonction des actions
+/// des boutons et change la couleur de fond des boutons en fonction de leur état.
 pub fn handle_game_button_actions(
     mut interaction_query: Query<(
         &Interaction,
@@ -39,6 +44,9 @@ pub fn handle_game_button_actions(
     }
 }
 
+// Fonction pour gérer les actions des boutons
+// Cette fonction est appelée lorsque l'utilisateur interagit avec un bouton.
+// Elle met à jour l'état du jeu en fonction de l'action du bouton et gère les transitions d'écran.
 fn handle_button_press(
     action: &GameButtonAction,
     commands: &mut Commands,
@@ -157,7 +165,9 @@ fn handle_button_press(
     }
 }
 
-// Fonctions helper
+/// Gère le choix de l'arène sélectionnée par l'utilisateur.
+/// Cette fonction met à jour l'état du jeu avec l'arène sélectionnée et
+/// prépare l'écran pour la question du bouncer.
 fn handle_arena_choice(
     commands: &mut Commands,
     game_state: &mut ResMut<GameScreenState>,
@@ -179,6 +189,8 @@ fn handle_arena_choice(
     spawn_bouncer_question_screen(commands, game_state);
 }
 
+/// Gère la réponse du joueur à la question du bouncer.
+/// Cette fonction vérifie si la réponse est correcte et met à jour l'état du jeu en conséquence.
 fn handle_bouncer_answer(
     commands: &mut Commands,
     game_state: &mut ResMut<GameScreenState>,
@@ -202,6 +214,7 @@ fn handle_bouncer_answer(
     }
 }
 
+/// Charge les données du maître (master) sélectionné dans l'état du jeu.
 fn load_master_data(game_state: &mut GameScreenState) {
     match JsonLoader::load_json_masters("assets/caracters/pnj/masters.json") {
         Ok(masters) => {

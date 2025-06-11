@@ -3,6 +3,13 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, BouncerQuestionUI};
 
+/// Affiche l'écran de question du Bouncer
+/// Cet écran permet de poser une question au Bouncer et de proposer 4 réponses possibles.
+/// Il contient également un bouton pour revenir à la sélection d'arène.
+///
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de question.
 pub fn spawn_bouncer_question_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {

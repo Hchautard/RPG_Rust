@@ -20,11 +20,11 @@ use crate::services::ui::player_creation_screen::{
 use crate::services::ui::player_slot_screen::{PlayerSlotScreenPlugin, SelectedPlayerSlot};
 use crate::services::ui::start_screen::StartScreenPlugin;
 
-// Plugin principal de l'interface utilisateur avec Bevy
+/// Plugin principal de l'interface utilisateur avec Bevy
 pub struct DisplayerBevy;
 
 impl Plugin for DisplayerBevy {
-    // On configure l'application avec les systèmes et plugins d'interface
+    /// On configure l'application avec les systèmes et plugins d'interface
     fn build(&self, app: &mut App) {
         app.init_state::<AppState>()
             .init_resource::<GameLoadContext>()

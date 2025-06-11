@@ -3,6 +3,12 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect, FlexWrap}
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState};
 
+/// Affiche l'écran de sélection de l'arène.
+/// Cet écran permet de choisir une arène pour commencer un combat.
+///
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de sélection.
 pub fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {

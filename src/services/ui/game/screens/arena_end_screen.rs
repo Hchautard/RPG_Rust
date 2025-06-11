@@ -3,6 +3,12 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaUI};
 
+/// Affiche l'écran de fin d'Arène.
+/// Cet écran est affiché lorsque le joueur a battu le boss de l'Arène.
+/// Il affiche un message de félicitations, le nom du Maître de l'Arène et le nom de l'Arène.
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de fin d'Arène.
 pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {

@@ -2,12 +2,13 @@ use crate::services::ui::constants::ButtonAction;
 use bevy::prelude::*;
 use bevy::ui::{AlignItems, FlexDirection, JustifyContent, Val};
 
-// Marqueur de composant pour identifier les entités du menu principal
+/// Marqueur de composant pour identifier les entités du menu principal
 #[derive(Component)]
 pub struct MainMenu;
 
-// On crée l'interface du menu principal avec les boutons de navigation
-
+/// On crée l'interface du menu principal avec les boutons de navigation
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
 pub fn setup_main_menu(mut commands: Commands) {
     commands
         .spawn((

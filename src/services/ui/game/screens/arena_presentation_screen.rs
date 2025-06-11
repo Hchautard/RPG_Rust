@@ -3,6 +3,12 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaPresentationUI};
 
+/// Affiche l'écran de présentation de l'Arène.
+/// Cet écran affiche les informations sur l'Arène sélectionnée, le Maître de l'Arène,
+/// ses attaques, et un bouton pour continuer vers l'Arène.
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de présentation.
 pub fn spawn_arena_presentation_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {

@@ -5,6 +5,12 @@ use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, A
 use rand::seq::SliceRandom;
 use rand::rng;
 
+/// Affiche l'écran de phase de crafting de l'Arène.
+/// Cet écran permet au joueur de réorganiser les instructions d'une recette pour vaincre le boss de l'Arène.
+/// Il affiche les instructions dans un ordre aléatoire et permet de valider l'ordre choisi.
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de crafting.
 pub fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {

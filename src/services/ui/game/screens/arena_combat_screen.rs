@@ -4,6 +4,12 @@ use crate::services::ui::constants::NORMAL_BUTTON;
 use crate::services::ui::game::{GameScreen, GameButtonAction, GameScreenState, ArenaUI};
 use std::collections::HashSet;
 
+/// Affiche l'écran de combat d'Arène.
+/// Cet écran permet de combattre un Maître d'Arène en sélectionnant des ingrédients pour concocter un cocktail.
+/// Il affiche les HP du joueur et du boss, ainsi que les ingrédients sélectionnés.
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
+/// - `game_state`: L'état du jeu contenant les informations nécessaires pour l'écran de combat.
 pub fn spawn_arena_combat_screen(commands: &mut Commands, game_state: &GameScreenState) {
     commands.spawn((
         Node {

@@ -3,6 +3,12 @@ use bevy::ui::{Val, JustifyContent, AlignItems, FlexDirection, UiRect};
 use crate::services::ui::constants::{ButtonAction, NORMAL_BUTTON};
 use crate::services::ui::game::{GameScreen, GameButtonAction};
 
+/// Affiche l'écran principal du jeu.
+/// Cet écran permet de sélectionner une arène pour commencer un combat.
+/// Il contient également un bouton pour revenir à l'écran précédent.
+///
+/// # Arguments
+/// - `commands`: Les commandes pour créer des entités dans Bevy.
 pub fn spawn_main_game_screen(commands: &mut Commands) {
     commands.spawn((
         Node {
