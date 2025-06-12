@@ -34,7 +34,7 @@ impl Displayer {
                 // Bloc avec titre et bordures
 
                 let block = Block::default()
-                    .title("🔥 RPG Rust - Menu Principal 🔥")
+                    .title("RPG Rust - Menu Principal")
                     .borders(Borders::ALL)
                     .border_type(BorderType::Double);
                 // Options du menu
@@ -83,7 +83,7 @@ impl Displayer {
                 // Bloc avec titre stylisé
 
                 let block = Block::default()
-                    .title("🍸 Aptitudes des Bartenders 🍸")
+                    .title("Aptitudes des Bartenders")
                     .borders(Borders::ALL)
                     .border_type(BorderType::Rounded);
                 // Formatage des aptitudes

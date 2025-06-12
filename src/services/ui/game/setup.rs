@@ -20,7 +20,7 @@ pub fn setup_game(mut commands: Commands, mut game_state: ResMut<GameScreenState
     if let Ok(bouncers) = JsonLoader::loadJsonBouncers("assets/caracters/pnj/bouncer.json") {
         if let Some(bouncer) = bouncers.first() {
             let question = bouncer.enigmas.first()
-                .unwrap_or(&"Question par défaut".to_string())
+                .unwrap_or(&"Question par defaut".to_string())
                 .clone();
             let options = vec![
                 "L'homme".to_string(),

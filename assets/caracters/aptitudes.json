@@ -13,7 +13,7 @@
     },
     {
       "name": "Degustation Experte",
-      "description": "Capacite à identifier des ingredients caches dans une boisson.",
+      "description": "Capacite a identifier des ingredients caches dans une boisson.",
       "pp": 5,
       "power": 2.0
     }
