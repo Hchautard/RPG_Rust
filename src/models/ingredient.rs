@@ -1,21 +1,13 @@
 use serde_derive::{Deserialize, Serialize};
 
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
+
+// Ingrédient avec nom, description, prix et type
 pub struct Ingredient {
     pub name: String,
-    pub description : String,
+    pub description: String,
     pub price: i32,
-    pub type_ing : String // type Type
+    pub type_ing: String,
 }
 
-impl Ingredient {
-    pub fn new(name: &str, description: String, price: i32, type_ing : String) -> Self {
-        Self {
-            name: name.to_string(),
-            description,
-            price,
-            type_ing
-        }
-    }
-}
+impl Ingredient {}

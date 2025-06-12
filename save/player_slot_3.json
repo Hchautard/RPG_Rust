@@ -1,0 +1,29 @@
+{
+  "1": {
+    "aptitudes": [
+      {
+        "description": "Description de l'aptitude",
+        "name": "Aptitude 3",
+        "power": 5.0,
+        "pp": 10
+      }
+    ],
+    "badge": {
+      "features": [
+        "Feature 1",
+        "Feature 2"
+      ],
+      "name": "Badge 1"
+    },
+    "caracter": {
+      "bankroll": 0,
+      "hp": 100,
+      "name": "Arwen",
+      "pp": 50,
+      "style": ""
+    },
+    "inventory": [],
+    "level": 1,
+    "reputation": 0
+  }
+}

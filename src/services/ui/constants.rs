@@ -1,9 +1,7 @@
 use bevy::prelude::*;
 
-// Constantes de couleurs partagées
+/// Constantes de couleurs partagees
 pub const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
-pub const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
-pub const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
 pub const SELECTED_BUTTON: Color = Color::srgb(0.35, 0.35, 0.75);
 pub const RED: Color = Color::srgb(1.0, 0.0, 0.0);
 pub const GREEN: Color = Color::srgb(0.0, 1.0, 0.0);
@@ -11,7 +9,7 @@ pub const BLUE: Color = Color::srgb(0.0, 0.0, 1.0);
 pub const WHITE: Color = Color::srgb(1.0, 1.0, 1.0);
 pub const BLACK: Color = Color::srgb(0.0, 0.0, 0.0);
 
-// États de l'application
+/// Etats principaux de l'application
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
     #[default]
@@ -19,9 +17,18 @@ pub enum AppState {
     Aptitudes,
     Game,
     PlayerSlot,
+    PlayerCreation,
+    StartScreen,
 }
 
-// Actions des boutons
+/// Etats du jeu (sous-etats de AppState::Game)
+#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
+pub enum GameState {
+    #[default]
+    Playing
+}
+
+/// Actions des boutons pour les menus principaux
 #[derive(Component, Clone)]
 pub enum ButtonAction {
     NewGame,
@@ -31,4 +38,11 @@ pub enum ButtonAction {
     Back,
     SelectSlot(usize),
     ConfirmSlot,
+    CreatePlayer,
+    StartGame,
+}
+
+#[derive(Resource, Default)]
+pub struct GameLoadContext {
+    pub is_load_game: bool,
 }

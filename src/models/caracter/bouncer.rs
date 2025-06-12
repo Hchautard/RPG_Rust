@@ -1,44 +1,26 @@
-use std::string;
-
 use super::pnj::Pnj;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+/// Représente un Bouncer, un PNJ qui garde l'entrée d'un lieu et pose des énigmes.
+/// Il hérite des caractéristiques d'un PNJ et possède des énigmes à résoudre.
+///
+/// # Exemple
+/// ```
+/// let bouncer = Bouncer {
+///     pnj: Pnj::new("Bouncer", "A tough-looking bouncer"),
+///     enigmas: vec![
+///         "What has keys but can't open locks?".to_string(),
+///         "I speak without a mouth and hear without ears. What am I?".to_string(),
+///     ],
+/// };
+/// assert_eq!(bouncer.pnj.name, "Bouncer");
+/// assert_eq!(bouncer.enigmas.len(), 2);
+/// ```
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Bouncer {
     pub pnj: Pnj,
-
     pub enigmas: Vec<String>,
 }
 
 impl Bouncer {
-    pub fn new(
-        name: &str,
-        style: &str,
-        hp: i32,
-        pp: i32,
-        job: &str,
-        dialogs: Vec<String>,
-        enigmas: Vec<String>,
-    ) -> Self {
-        Self {
-            pnj: Pnj::new(name, style, hp, pp, job, dialogs),
-            enigmas,
-        }
-    }
-
-    pub fn give_enigma(&self, index: usize) -> Option<&String> {
-        self.enigmas.get(index)
-    }
-
-
-    pub fn verify_enigma(&self, index: usize, answer: &str) -> bool {
-        match self.enigmas.get(index) {
-            Some(enigma) => enigma.to_lowercase().contains(&answer.to_lowercase()),
-            None => false,
-        }
-    }
-
-    pub fn bounce(&self) {
-        println!("{} vous barre le passage !", self.pnj.caracter.name);
-    }
 }
