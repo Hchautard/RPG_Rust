@@ -1,4 +1,4 @@
-Bienvenue sur le projet AlcoQuest
+Bienvenue sur le projet AlcoQuest.
 Ce repository contient les livrables suivants :
 
 - Manuel d'utilisation
