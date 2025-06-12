@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use crate::models::recipe::Recipe;
 
+/// État du jeu, qui contient les informations sur l'écran actuel, les questions, les arènes, etc.
 #[derive(Resource, Default)]
 pub struct GameScreenState {
     pub current_screen: GameScreenType,
@@ -26,6 +27,7 @@ pub struct GameScreenState {
     pub show_crafting_phase: bool,
 }
 
+/// Implémentation des méthodes pour l'état du jeu
 impl GameScreenState {
     /// Réinitialise l'état du combat
     pub fn reset_combat(&mut self) {
@@ -39,6 +41,7 @@ impl GameScreenState {
     }
 }
 
+/// Types d'écrans du jeu
 #[derive(Default, PartialEq)]
 pub enum GameScreenType {
     #[default]
@@ -49,6 +52,7 @@ pub enum GameScreenType {
     Arena,
 }
 
+/// État du combat dans l'Arene
 #[derive(Default, PartialEq)]
 pub enum ArenaCombatState {
     #[default]
@@ -59,6 +63,7 @@ pub enum ArenaCombatState {
     Defeat,
 }
 
+/// État de l'artisanat de cocktail en cours
 #[derive(Default)]
 pub struct CurrentCocktailCrafting {
     pub selected_ingredients: Vec<String>,

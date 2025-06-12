@@ -2,6 +2,9 @@ use bevy::prelude::*;
 use crate::services::ui::game::{GameScreenState, GameScreenType, screens::spawn_main_game_screen};
 use crate::services::json_loader::JsonLoader;
 
+/// Initialise l'écran de jeu.
+/// Cette fonction est appelée pour configurer l'état initial du jeu,
+/// charger les arènes et les données du bouncer, et afficher l'écran principal.
 pub fn setup_game(mut commands: Commands, mut game_state: ResMut<GameScreenState>) {
     // Initialiser l'état
     game_state.current_screen = GameScreenType::Main;
@@ -35,6 +38,8 @@ pub fn setup_game(mut commands: Commands, mut game_state: ResMut<GameScreenState
     spawn_main_game_screen(&mut commands);
 }
 
+/// Supprime tous les éléments de l'écran de jeu.
+/// Cette fonction est appelée pour nettoyer l'écran de jeu avant de le réinitialiser ou de le fermer.
 pub fn despawn_game(mut commands: Commands, query: Query<Entity, With<GameScreen>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
