@@ -122,7 +122,7 @@ pub fn setup_player_slot_screen(
 ) {
     // On adapte du texte selon le contexte (nouveau jeu ou chargement)
     let screen_title = if game_context.is_load_game {
-        "Choisissez une sauvegarde à charger"
+        "Choisissez une sauvegarde a charger"
     } else {
         "Choisissez un slot pour la nouvelle partie"
     };

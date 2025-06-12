@@ -29,7 +29,7 @@ pub fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameSc
         // Message d'erreur si mauvaise réponse au bouncer
         if game_state.wrong_answer_message {
             parent.spawn((
-                Text::new("Mauvaise réponse ! Vous avez été expulsé de l'entrée."),
+                Text::new("Mauvaise reponse ! Vous avez ete expulse de l'entree."),
                 Node {
                     margin: UiRect::all(Val::Px(10.0)),
                     ..Default::default()
@@ -38,7 +38,7 @@ pub fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameSc
         }
         
         // Description
-        parent.spawn(Text::new("Selectionnez l'arène dans laquelle vous souhaitez vous battre"));
+        parent.spawn(Text::new("Selectionnez l'arene dans laquelle vous souhaitez vous battre"));
         
         // Container pour les arènes
         parent.spawn(
