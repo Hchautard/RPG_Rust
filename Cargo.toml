@@ -12,6 +12,9 @@ ratatui = "0.29.0"
 crossterm = "0.28.1"
 bevy = { version = "0.15.3", features = ["dynamic_linking"] }
 rand = "0.9.1"
+tempfile = "3.0"
+
+
 
 [profile.dev]
 opt-level = 1
