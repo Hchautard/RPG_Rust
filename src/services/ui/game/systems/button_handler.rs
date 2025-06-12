@@ -95,6 +95,8 @@ fn handle_button_press(
         GameButtonAction::SelectIngredient(ingredient) => {
             if !game_state.current_crafting.selected_ingredients.contains(ingredient) {
                 game_state.current_crafting.selected_ingredients.push(ingredient.clone());
+            } else {
+                game_state.current_crafting.selected_ingredients.retain(|i| i != ingredient);
             }
             clear_screen();
             spawn_arena_combat_screen(commands, game_state);

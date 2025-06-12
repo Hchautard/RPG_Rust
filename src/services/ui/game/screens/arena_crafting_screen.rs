@@ -44,7 +44,7 @@ pub fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &G
                     .spawn((
                         Button,
                         Node {
-                            width: Val::Px(400.0),
+                            width: Val::Px(500.0),
                             height: Val::Px(40.0),
                             margin: UiRect::all(Val::Px(5.0)),
                             justify_content: JustifyContent::Center,
@@ -80,7 +80,7 @@ pub fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &G
                 .spawn((
                     Button,
                     Node {
-                        width: Val::Px(200.0),
+                        width: Val::Px(300.0),
                         height: Val::Px(50.0),
                         margin: UiRect::all(Val::Px(10.0)),
                         justify_content: JustifyContent::Center,
@@ -117,7 +117,7 @@ pub fn spawn_arena_crafting_phase_screen(commands: &mut Commands, game_state: &G
 
             // Feedback sur la dernière tentative
             if !game_state.current_crafting.instruction_correct && game_state.current_crafting.selected_instructions.is_empty() {
-                parent.spawn(Text::new("Ordre incorrect ! Reessayez. (-15 HP)"));
+                parent.spawn(Text::new("Ordre incorrect ! Reessayez."));
             }
         } else {
             parent.spawn(Text::new("Aucune recette disponible."));

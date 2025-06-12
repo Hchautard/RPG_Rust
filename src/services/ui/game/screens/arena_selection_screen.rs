@@ -38,7 +38,7 @@ pub fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameSc
         }
         
         // Description
-        parent.spawn(Text::new("Sélectionnez l'arène dans laquelle vous souhaitez vous battre"));
+        parent.spawn(Text::new("Selectionnez l'arène dans laquelle vous souhaitez vous battre"));
         
         // Container pour les arènes
         parent.spawn(
@@ -76,7 +76,7 @@ pub fn spawn_arena_selection_screen(commands: &mut Commands, game_state: &GameSc
                     ))
                     .with_children(|button| {
                         button.spawn(Text::new(arena_name.clone()));
-                        button.spawn(Text::new(format!("Thème: {}", arena_theme)));
+                        button.spawn(Text::new(format!("Theme: {}", arena_theme)));
                     });
             }
         });
