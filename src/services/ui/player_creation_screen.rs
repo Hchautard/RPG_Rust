@@ -67,7 +67,7 @@ pub fn setup_player_creation_screen(
     selected_slot: Res<SelectedPlayerSlot>,
     mut creation_data: ResMut<PlayerCreationData>,
 ) {
-    // Reinitialiser les donnees de creation
+    // Reinitialise les donnees de creation
     *creation_data = PlayerCreationData::default();
 
     commands
@@ -150,7 +150,7 @@ pub fn setup_player_creation_screen(
                             ..Default::default()
                         })
                         .with_children(|badges_container| {
-                            // Exemple de badges (à remplacer par des vrais badges depuis une ressource)
+                            // Exemple de badges
                             for i in 0..3 {
                                 badges_container.spawn((
                                     Button,
@@ -193,7 +193,7 @@ pub fn setup_player_creation_screen(
                             ..Default::default()
                         })
                         .with_children(|aptitudes_container| {
-                            // Exemple d'aptitudes (à remplacer par des vraies aptitudes depuis une ressource)
+                            // Exemple d'aptitudes
                             for i in 0..6 {
                                 aptitudes_container.spawn((
                                     Button,
@@ -279,7 +279,7 @@ pub fn despawn_player_creation_screen(
     }
 }
 
-// Systeme de gestion des saisies texte (simplifie avec noms aleatoires)
+// Systeme de gestion des saisies texte ( avec noms aleatoires)
 pub fn handle_text_input(
     mut interaction_query: Query<(&Interaction, &TextInput, &Children), (Changed<Interaction>, With<Button>)>,
     mut text_query: Query<&mut Text>,
@@ -287,8 +287,8 @@ pub fn handle_text_input(
 ) {
     for (interaction, input_type, children) in interaction_query.iter_mut() {
         if let Interaction::Pressed = *interaction {
-            // Utiliser un nom aleatoire au lieu d'une saisie reelle
-            match *input_type {  // Dereferencer input_type ici
+            // Utilise un nom aleatoire au lieu d'une saisie reelle
+            match *input_type {  
                 TextInput::Name => {
                     // Liste de noms de heros aleatoires
                     let hero_names = [
@@ -342,7 +342,7 @@ pub fn handle_badge_selection(
     )>,
     mut creation_data: ResMut<PlayerCreationData>,
 ) {
-    // Etape 1: Trouver quel badge a ete clique
+    // Trouve quel badge a ete clique
     let mut clicked_index = None;
     
     for (interaction, badge_choice) in params.p0().iter() {
@@ -374,7 +374,7 @@ pub fn handle_badge_selection(
                 if choice.0 == index {
                     *bg_color = BackgroundColor(GREEN);
                 } else if previous_selection == Some(choice.0) {
-                    // Reinitialiser le bouton precedemment selectionne
+                    // Reinitialise le bouton precedemment selectionne
                     *bg_color = BackgroundColor(NORMAL_BUTTON);
                 }
             }
@@ -441,18 +441,18 @@ pub fn handle_creation_confirmation(
     for (interaction, action) in interaction_query.iter() {
         if let Interaction::Pressed = *interaction {
             if let ButtonAction::CreatePlayer = action {
-                // Verifier que les informations necessaires sont renseignees
+                // Verifie que les informations necessaires sont renseignees
                 if !creation_data.name.is_empty() && 
                    creation_data.selected_badge_index.is_some() && !creation_data.selected_aptitudes.is_empty() {
                     
                     // Creer le joueur
                     let player = create_player(&creation_data);
                     
-                    // Determiner le chemin du fichier base sur le slot
+                    // Determine le chemin du fichier base sur le slot
                     let slot_index = selected_slot.slot.unwrap_or(0);
                     let file_path = format!("save/player_slot_{}.json", slot_index + 1);
                     
-                    // Sauvegarder le joueur dans un fichier JSON
+                    // Sauvegarde le joueur dans un fichier JSON
                     match JsonLoader::save_player_to_json(&file_path, &player) {
                         Ok(_) => {
                             println!("Joueur sauvegarde dans {}", file_path);
@@ -471,7 +471,7 @@ pub fn handle_creation_confirmation(
     }
 }
 
-// Fonction utilitaire pour creer un nouveau joueur à partir des donnees de creation
+// Fonction pour creer un nouveau joueur à partir des donnees de creation
 pub fn create_player(creation_data: &PlayerCreationData) -> Player {
     let badge = Badge {
         name: format!("Badge {}", creation_data.selected_badge_index.unwrap_or(0) + 1),

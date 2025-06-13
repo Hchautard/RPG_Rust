@@ -37,7 +37,7 @@ pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenSt
         ArenaUI,
     ))
     .with_children(|parent| {
-        // Afficher le message approprié selon le résultat
+        // Affiche le message approprié selon le résultat
         if player_won {
             parent.spawn(Text::new("Bravo ! Vous avez battu le boss !"));
             
@@ -81,7 +81,7 @@ pub fn spawn_arena_end_screen(commands: &mut Commands, game_state: &GameScreenSt
             )));
         }
 
-        // Afficher les HP finaux
+        // Affiche les HP finaux
         parent.spawn(Text::new(format!(
             "HP finaux - Vous: {} | Boss: {}",
             game_state.player_hp,

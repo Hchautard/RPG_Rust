@@ -53,7 +53,7 @@ fn handle_button_press(
     game_entities: &Query<Entity, With<GameScreen>>,
     arena_ui_query: &Query<Entity, With<ArenaUI>>,
 ) {
-    // Nettoyer l'écran actuel
+    // Nettoie l'écran actuel
     let mut clear_screen = || {
         for entity in game_entities.iter() {
             commands.entity(entity).despawn_recursive();
@@ -112,11 +112,11 @@ fn handle_button_press(
             spawn_arena_combat_screen(commands, game_state);
         }
         GameButtonAction::ValidateCocktail => {
-            // Valider le cocktail en comparant avec la recette du maître
+            // Valide le cocktail en comparant avec la recette du maître
             let is_cocktail_correct = validate_cocktail_recipe(game_state);
 
             if is_cocktail_correct {
-                // Cocktail correct - transition vers la phase de crafting
+                // Cocktail correct
                 game_state.current_crafting.cocktail_ready = true;
                 game_state.show_crafting_phase = true;
                 game_state.show_intro_screen = false;
@@ -130,18 +130,18 @@ fn handle_button_press(
                 }
                 spawn_arena_combat_screen(commands, game_state);
             } else {
-                // Cocktail incorrect - infliger des dégâts au joueur
+                // Cocktail incorrect
                 game_state.player_hp = game_state.player_hp.saturating_sub(20); // Réduire HP de 20
                 game_state.current_crafting.selected_ingredients.clear(); // Vider la sélection
 
-                // Vérifier si le joueur a perdu
+                // Vérifie si le joueur a perdu
                 if game_state.player_hp == 0 {
-                    // Joueur défait - aller à l'écran de fin avec défaite
+                    // Joueur défait
                     game_state.current_crafting.cocktail_ready = false;
                     clear_screen();
                     spawn_arena_end_screen(commands, game_state);
                 } else {
-                    // Continuer le combat - rafraîchir l'écran
+                    // Continuer le combat
                     clear_screen();
                     spawn_arena_combat_screen(commands, game_state);
                 }
@@ -326,7 +326,7 @@ fn validate_cocktail_recipe(game_state: &GameScreenState) -> bool {
         let expected_ingredients: std::collections::HashSet<String> =
             recipe.ingredients.iter().map(|i| i.name.clone()).collect();
 
-        // Vérifier que les ingrédients sélectionnés correspondent exactement à la recette
+        // Vérifie que les ingrédients sélectionnés correspondent exactement à la recette
         selected_ingredients == expected_ingredients
     } else {
         false // Pas de recette = échec

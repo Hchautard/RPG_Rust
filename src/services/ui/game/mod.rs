@@ -14,17 +14,17 @@ use bevy::prelude::*;
 use crate::services::json_loader::JsonLoader;
 
 pub fn setup_game(mut commands: Commands, mut game_state: ResMut<GameScreenState>) {
-    // Initialiser l'état
+    // Initialise l'état
     game_state.current_screen = GameScreenType::Main;
     
-    // Charger les arènes depuis le JSON
+    // Charge les arènes depuis le JSON
     if let Ok(arenas) = JsonLoader::load_json_arena("assets/caracters/arena.json") {
         game_state.available_arenas = arenas.iter()
             .map(|arena| (arena.name.clone(), arena.theme.clone()))
             .collect();
     }
     
-    // Charger les données du bouncer
+    // Charge les données du bouncer
     if let Ok(bouncers) = JsonLoader::load_json_bouncers("assets/caracters/pnj/bouncer.json") {
         if let Some(bouncer) = bouncers.first() {
             let question = bouncer.enigmas.first()
